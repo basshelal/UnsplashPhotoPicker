@@ -19,7 +19,7 @@
             android:indeterminateTintMode="src_atop"
             android:indeterminateTint="@color/pickerColorBackground"/>
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
             android:contentDescription="@string/photo"
             android:id="@+id/image_show_view"
             android:layout_width="0dp"

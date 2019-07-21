@@ -20,19 +20,16 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This is using the Android paging library to display an infinite list of photos.
  * This deals with either a single or multiple selection list.
  */
-class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
+open class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
     PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
-    private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
-
-    private val mSelectedIndexes = ArrayList<Int>()
-
-    private val mSelectedImages = ArrayList<UnsplashPhoto>()
-
-    private var mOnPhotoSelectedListener: OnPhotoSelectedListener? = null
+    private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    private val selectedIndexes = ArrayList<Int>()
+    private val selectedImages = ArrayList<UnsplashPhoto>()
+    private var onPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        return PhotoViewHolder(mLayoutInflater.inflate(R.layout.item_unsplash_photo, parent, false))
+        return PhotoViewHolder(layoutInflater.inflate(R.layout.item_unsplash_photo, parent, false))
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
@@ -47,27 +44,27 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
             holder.txtView.text = photo.user.name
             // selected controls visibility
             holder.checkedImageView.visibility =
-                    if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
+                if (selectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
             holder.overlay.visibility =
-                    if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
+                if (selectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
             // click listener
             holder.itemView.setOnClickListener {
                 // selected index(es) management
-                if (mSelectedIndexes.contains(holder.adapterPosition)) {
-                    mSelectedIndexes.remove(holder.adapterPosition)
+                if (selectedIndexes.contains(holder.adapterPosition)) {
+                    selectedIndexes.remove(holder.adapterPosition)
                 } else {
-                    if (!isMultipleSelection) mSelectedIndexes.clear()
-                    mSelectedIndexes.add(holder.adapterPosition)
+                    if (!isMultipleSelection) selectedIndexes.clear()
+                    selectedIndexes.add(holder.adapterPosition)
                 }
                 if (isMultipleSelection) {
                     notifyDataSetChanged()
                 }
-                mOnPhotoSelectedListener?.onPhotoSelected(mSelectedIndexes.size)
+                onPhotoSelectedListener?.onPhotoSelected(selectedIndexes.size)
                 // change title text
             }
             holder.itemView.setOnLongClickListener {
                 photo.urls.regular?.let {
-                    mOnPhotoSelectedListener?.onPhotoLongPress(holder.imageView, it)
+                    onPhotoSelectedListener?.onPhotoLongPress(holder.imageView, it)
                 }
                 false
             }
@@ -78,22 +75,22 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
      * Getter for the selected images.
      */
     fun getImages(): ArrayList<UnsplashPhoto> {
-        mSelectedImages.clear()
-        for (index in mSelectedIndexes) {
+        selectedImages.clear()
+        for (index in selectedIndexes) {
             currentList?.get(index)?.let {
-                mSelectedImages.add(it)
+                selectedImages.add(it)
             }
         }
-        return mSelectedImages
+        return selectedImages
     }
 
     fun clearSelection() {
-        mSelectedImages.clear()
-        mSelectedIndexes.clear()
+        selectedImages.clear()
+        selectedIndexes.clear()
     }
 
     fun setOnImageSelectedListener(onPhotoSelectedListener: OnPhotoSelectedListener) {
-        mOnPhotoSelectedListener = onPhotoSelectedListener
+        this.onPhotoSelectedListener = onPhotoSelectedListener
     }
 
     companion object {

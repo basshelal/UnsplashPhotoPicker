@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -44,6 +45,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'

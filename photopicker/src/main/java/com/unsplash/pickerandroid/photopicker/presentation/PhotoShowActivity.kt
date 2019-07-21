@@ -16,8 +16,8 @@ class PhotoShowActivity : AppCompatActivity() {
         // loading the image thanks to its url
         Picasso.get().load(intent.getStringExtra(EXTRA_URL))
             .into(image_show_view)
-        // click listener
-        image_show_layout.setOnClickListener { supportFinishAfterTransition() }
+
+        // TODO swipe down should close this
     }
 
     override fun onBackPressed() {
