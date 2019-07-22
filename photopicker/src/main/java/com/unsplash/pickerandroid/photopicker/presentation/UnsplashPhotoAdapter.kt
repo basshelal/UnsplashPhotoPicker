@@ -1,6 +1,5 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -20,16 +19,18 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This is using the Android paging library to display an infinite list of photos.
  * This deals with either a single or multiple selection list.
  */
-open class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
+open class UnsplashPhotoAdapter constructor(private val isMultipleSelection: Boolean) :
     PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
-    private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
     private val selectedIndexes = ArrayList<Int>()
     private val selectedImages = ArrayList<UnsplashPhoto>()
     private var onPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        return PhotoViewHolder(layoutInflater.inflate(R.layout.item_unsplash_photo, parent, false))
+        return PhotoViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_unsplash_photo, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {

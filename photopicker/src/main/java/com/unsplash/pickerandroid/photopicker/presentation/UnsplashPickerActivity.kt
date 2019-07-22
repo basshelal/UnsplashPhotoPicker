@@ -40,7 +40,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         // recycler view layout manager
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         // recycler view adapter
-        adapter = UnsplashPhotoAdapter(this, isMultipleSelection)
+        adapter = UnsplashPhotoAdapter(isMultipleSelection)
         adapter.setOnImageSelectedListener(this)
         // recycler view configuration
         unsplash_picker_recycler_view.setHasFixedSize(true)
@@ -59,8 +59,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         unsplash_picker_done_image_view.setOnClickListener { sendPhotosAsResult() }
         // get the view model and bind search edit text
         viewModel =
-                ViewModelProviders.of(this, Injector.createPickerViewModelFactory())
-                    .get(UnsplashPickerViewModel::class.java)
+            ViewModelProviders.of(this, Injector.createPickerViewModelFactory())
+                .get(UnsplashPickerViewModel::class.java)
         observeViewModel()
         viewModel.bindSearch(unsplash_picker_edit_text)
     }
@@ -80,8 +80,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         })
         viewModel.photosLiveData.observe(this, Observer {
             unsplash_picker_no_result_text_view.visibility =
-                    if (it == null || it.isEmpty()) View.VISIBLE
-                    else View.GONE
+                if (it == null || it.isEmpty()) View.VISIBLE
+                else View.GONE
             adapter.submitList(it)
         })
     }
@@ -90,8 +90,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         super.onConfigurationChanged(newConfig)
         // we want the recycler view to have 3 columns when in landscape and 2 in portrait
         layoutManager.spanCount =
-                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 3
-                else 2
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
         adapter.notifyDataSetChanged()
     }
 
