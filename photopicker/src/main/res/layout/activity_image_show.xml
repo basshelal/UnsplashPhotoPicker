@@ -2,13 +2,27 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/image_show_layout"
         android:layout_width="match_parent"
         android:clickable="true"
         android:focusable="true"
         android:layout_height="match_parent">
 
+    <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/image_photoView"
+            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_margin="8dp"
+            android:src="@color/colorPrimary"
+            android:contentDescription="@string/photo"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/imageText_linearLayout"
+            app:layout_constraintTop_toTopOf="parent"/>
+
     <ProgressBar
+            android:id="@+id/image_progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -16,17 +30,35 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:indeterminate="true"
-            android:indeterminateTintMode="src_atop"
-            android:indeterminateTint="@color/pickerColorBackground"/>
+            android:indeterminateTintMode="src_atop"/>
 
-    <com.github.chrisbanes.photoview.PhotoView
-            android:contentDescription="@string/photo"
-            android:id="@+id/image_show_view"
-            android:layout_width="0dp"
-            android:layout_margin="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_height="0dp"/>
+    <LinearLayout
+            android:id="@+id/imageText_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_photoView"
+            app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+                tools:text="Photo By "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        <TextView
+                tools:text="Leeroy Jenkins "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"/>
+        <TextView
+                tools:text="on "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        <TextView
+                tools:text="@string/unsplash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

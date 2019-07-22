@@ -15,7 +15,6 @@ class ExampleApplication : Application() {
             UNSPLASH_ACCESS_KEY,
             UNSPLASH_SECRET_KEY
             /* optional page size (number of photos per page) */
-        )
-            /* .setLoggingEnabled(true) // if you want to see the http requests */
+        ).setLoggingEnabled(true) // if you want to see the http requests */
     }
 }

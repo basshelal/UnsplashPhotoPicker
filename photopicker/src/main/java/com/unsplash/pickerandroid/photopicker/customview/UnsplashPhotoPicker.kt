@@ -1,5 +1,6 @@
 package com.unsplash.pickerandroid.photopicker.customview
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -7,10 +8,13 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -103,6 +107,44 @@ class UnsplashPhotoPicker
             currentState = UnsplashPickerState.SEARCHING
             updateUiFromState()
         }
+
+        clearSearch_imageView.setOnClickListener {
+            search_editText.text = SpannableStringBuilder("")
+        }
+
+        /* TODO trying to make search bar hide like Gmail */
+
+        unsplashPicker_recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            var scrollingDown = false
+            var scrollingUp = false
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                // Scrolling up
+                if (dy > 0 && !scrollingUp) {
+                    searchLayout?.slideUp()
+                    scrollingUp = true
+                    scrollingDown = false
+                }
+                // Scrolling down
+                if (dy < 0 && !scrollingDown) {
+                    searchLayout?.slideDown()
+                    scrollingDown = true
+                    scrollingUp = false
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    this@UnsplashPhotoPicker.search_editText.also {
+                        if (it.hasFocus()) {
+                            it.clearFocus()
+                            it.closeKeyboard()
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun updateUiFromState() {
@@ -245,7 +287,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 // right clear button on top of edit text gone
                 unsplash_picker_clear_image_view.visibility = View.GONE
                 // keyboard down
-                unsplash_picker_edit_text.closeKeyboard(this)
+                unsplash_picker_edit_text.closeKeyboard()
                 // action bar with unsplash
                 unsplash_picker_title_text_view.text = getString(R.string.unsplash)
                 // clear list selection
@@ -264,7 +306,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 unsplash_picker_clear_image_view.visibility = View.VISIBLE
                 // keyboard up
                 unsplash_picker_edit_text.requestFocus()
-                unsplash_picker_edit_text.openKeyboard(this)
+                unsplash_picker_edit_text.openKeyboard()
                 // clear list selection
                 adapter.clearSelectedPhotos()
                 adapter.notifyDataSetChanged()
@@ -281,7 +323,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 // right clear button on top of edit text gone
                 unsplash_picker_clear_image_view.visibility = View.GONE
                 // keyboard down
-                unsplash_picker_edit_text.closeKeyboard(this)
+                unsplash_picker_edit_text.closeKeyboard()
             }
         }
     }
@@ -301,4 +343,19 @@ open class SimpleTextWatcher : TextWatcher {
             }
         }
     }
+}
+
+fun View.slideUp(duration: Int = 200) {
+    val verticalMargin = (layoutParams as ViewGroup.MarginLayoutParams).let { it.topMargin + it.bottomMargin }
+    ObjectAnimator.ofFloat(this, "translationY", -this.height.toFloat() - verticalMargin).apply {
+        this.duration = duration.toLong()
+        this.interpolator = AccelerateDecelerateInterpolator()
+    }.start()
+}
+
+fun View.slideDown(duration: Int = 200) {
+    ObjectAnimator.ofFloat(this, "translationY", 0F).apply {
+        this.duration = duration.toLong()
+        this.interpolator = AccelerateDecelerateInterpolator()
+    }.start()
 }

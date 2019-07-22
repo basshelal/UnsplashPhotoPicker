@@ -9,7 +9,7 @@ import android.view.inputmethod.InputMethodManager
 /**
  * Opens the keyboard using the view itself.
  */
-fun View.openKeyboard(context: Context) {
+fun View.openKeyboard() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
@@ -17,7 +17,7 @@ fun View.openKeyboard(context: Context) {
 /**
  * Closes the keyboard using the view itself.
  */
-fun View.closeKeyboard(context: Context) {
+fun View.closeKeyboard() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(windowToken, 0)
 }

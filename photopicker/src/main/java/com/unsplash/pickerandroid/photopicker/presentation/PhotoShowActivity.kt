@@ -15,7 +15,7 @@ class PhotoShowActivity : AppCompatActivity() {
         setContentView(R.layout.activity_image_show)
         // loading the image thanks to its url
         Picasso.get().load(intent.getStringExtra(EXTRA_URL))
-            .into(image_show_view)
+            .into(image_photoView)
 
         // TODO swipe down should close this
     }
