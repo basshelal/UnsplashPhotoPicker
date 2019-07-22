@@ -1,21 +1,11 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.widget.ImageView
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 
 interface OnPhotoSelectedListener {
 
-    /**
-     * When a specified number of photos are selected.
-     *
-     * @param nbOfSelectedPhotos the number of selected photos
-     */
-    fun onPhotoSelected(nbOfSelectedPhotos: Int)
+    fun onPhotosSelected(photos: List<UnsplashPhoto>)
 
-    /**
-     * When the user long presses an photo.
-     *
-     * @param imageView the long pressed image view
-     * @param url the url of the photo
-     */
-    fun onPhotoLongPress(imageView: ImageView, url: String)
+    fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView)
 }

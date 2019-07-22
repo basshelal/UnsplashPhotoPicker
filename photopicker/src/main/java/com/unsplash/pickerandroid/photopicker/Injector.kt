@@ -2,7 +2,6 @@ package com.unsplash.pickerandroid.photopicker
 
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.domain.Repository
-import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerViewModelFactory
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -16,25 +15,22 @@ import retrofit2.converter.moshi.MoshiConverterFactory
  */
 object Injector {
 
-    private const val CONTENT_TYPE = "Content-Type"
-    private const val APPLICATION_JSON = "application/json"
-    private const val ACCEPT_VERSION = "Accept-Version"
+    val repository: Repository = Repository(createNetworkEndpoints())
 
     private fun createHeaderInterceptor(): Interceptor {
         return Interceptor { chain ->
             val newRequest = chain.request().newBuilder()
-                .addHeader(CONTENT_TYPE, APPLICATION_JSON)
-                .addHeader(ACCEPT_VERSION, "v1")
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept-Version", "v1")
                 .build()
             chain.proceed(newRequest)
         }
     }
 
-    private fun createLoggingInterceptor(): HttpLoggingInterceptor {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        return loggingInterceptor
-    }
+    private fun createLoggingInterceptor() =
+        HttpLoggingInterceptor().also {
+            it.level = HttpLoggingInterceptor.Level.BODY
+        }
 
     private fun createHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
@@ -59,12 +55,4 @@ object Injector {
 
     private fun createNetworkEndpoints(): NetworkEndpoints =
         createRetrofitBuilder().create(NetworkEndpoints::class.java)
-
-    private fun createRepository(): Repository {
-        return Repository(createNetworkEndpoints())
-    }
-
-    fun createPickerViewModelFactory(): UnsplashPickerViewModelFactory {
-        return UnsplashPickerViewModelFactory(createRepository())
-    }
 }

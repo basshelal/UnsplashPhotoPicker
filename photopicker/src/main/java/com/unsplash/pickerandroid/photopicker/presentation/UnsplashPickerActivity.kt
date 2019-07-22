@@ -1,22 +1,8 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
-import android.os.Bundle
-import android.text.TextUtils
-import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.unsplash.pickerandroid.photopicker.Injector
-import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.activity_picker.*
 
 /**
  * Main screen for the picker.
@@ -25,6 +11,13 @@ import kotlinx.android.synthetic.main.activity_picker.*
  */
 class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
+    @Deprecated("Don't use!", ReplaceWith("", ""), DeprecationLevel.ERROR)
+    override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView) = TODO("not implemented")
+
+    @Deprecated("Don't use!", ReplaceWith("", ""), DeprecationLevel.ERROR)
+    override fun onPhotosSelected(photos: List<UnsplashPhoto>) = TODO("not implemented")
+
+/*
     private lateinit var layoutManager: StaggeredGridLayoutManager
     private lateinit var adapter: UnsplashPhotoAdapter
     private lateinit var viewModel: UnsplashPickerViewModel
@@ -94,7 +87,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         adapter.notifyDataSetChanged()
     }
 
-    override fun onPhotoSelected(nbOfSelectedPhotos: Int) {
+    override fun onPhotosSelected(nbOfSelectedPhotos: Int) {
         // if multiple selection
         if (isMultipleSelection) {
             // update the title
@@ -126,17 +119,17 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
      */
     private fun sendPhotosAsResult() {
         // get the selected photos
-        val photos: ArrayList<UnsplashPhoto> = adapter.getImages()
+        val photos = adapter.getSelectedPhotos()
         // track the downloads
         viewModel.trackDownloads(photos)
         // send them back to the calling activity
         val data = Intent()
-        data.putExtra(EXTRA_PHOTOS, photos)
+        data.putExtra(EXTRA_PHOTOS, photos.toTypedArray())
         setResult(Activity.RESULT_OK, data)
         finish()
     }
 
-    override fun onPhotoLongPress(imageView: ImageView, url: String) {
+    override fun onPhotoLongClick(photoImageView: ImageView, url: String) {
         startActivity(PhotoShowActivity.getStartingIntent(this, url))
     }
 
@@ -166,10 +159,6 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         }
     }
 
-    /*
-    STATES
-     */
-
     private fun updateUiFromState() {
         when (currentState) {
             UnsplashPickerState.IDLE -> {
@@ -191,7 +180,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 // action bar with unsplash
                 unsplash_picker_title_text_view.text = getString(R.string.unsplash)
                 // clear list selection
-                adapter.clearSelection()
+                adapter.clearSelectedPhotos()
                 adapter.notifyDataSetChanged()
             }
             UnsplashPickerState.SEARCHING -> {
@@ -208,7 +197,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 unsplash_picker_edit_text.requestFocus()
                 unsplash_picker_edit_text.openKeyboard(this)
                 // clear list selection
-                adapter.clearSelection()
+                adapter.clearSelectedPhotos()
                 adapter.notifyDataSetChanged()
             }
             UnsplashPickerState.PHOTO_SELECTED -> {
@@ -244,4 +233,5 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
             return intent
         }
     }
+*/
 }
