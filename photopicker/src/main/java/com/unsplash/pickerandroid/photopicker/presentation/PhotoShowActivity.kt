@@ -11,7 +11,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
-import com.unsplash.pickerandroid.photopicker.customview.PhotoSize
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.activity_image_show.*
 import kotlinx.android.synthetic.main.photo_picker.*
@@ -54,7 +53,7 @@ class PhotoShowFragment : Fragment() {
     }
 
     companion object {
-        val TAG = "PhotoShowFragment"
+        const val TAG = "PhotoShowFragment"
         private const val PHOTO = "PHOTO"
         private const val PHOTO_SIZE = "PHOTO_SIZE"
 

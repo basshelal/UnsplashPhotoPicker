@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
-import com.unsplash.pickerandroid.photopicker.customview.PhotoSize
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
 

@@ -1,12 +1,9 @@
-package com.unsplash.pickerandroid.photopicker.customview
+package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -28,10 +25,8 @@ import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.data.UnsplashUrls
 import com.unsplash.pickerandroid.photopicker.domain.Repository
-import com.unsplash.pickerandroid.photopicker.presentation.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_picker.*
 import kotlinx.android.synthetic.main.photo_picker.view.*
 import java.util.concurrent.TimeUnit
 
@@ -63,7 +58,8 @@ class UnsplashPhotoPicker
     var errorDrawable: Drawable? = null // xml attribute TODO, do it later!
     var placeHolderDrawable: Drawable? = null // xml attribute TODO, do it later!
 
-    var photoSize: PhotoSize = PhotoSize.SMALL // xml attribute TODO, do it later!
+    var photoSize: PhotoSize =
+        PhotoSize.SMALL // xml attribute TODO, do it later!
 
     private var currentWatcher: TextWatcher? = null
 
@@ -83,10 +79,6 @@ class UnsplashPhotoPicker
 
     val selectedPhotos: List<UnsplashPhoto>
         get() = adapter.getSelectedPhotos()
-
-    // State
-    private var currentState = UnsplashPickerState.IDLE
-    private var previousState = UnsplashPickerState.IDLE
 
     init {
         View.inflate(context, R.layout.photo_picker, this)
@@ -119,7 +111,6 @@ class UnsplashPhotoPicker
         search_editText.bindSearch()
 
         search_editText.setOnClickListener {
-            currentState = UnsplashPickerState.SEARCHING
             updateUiFromState()
         }
 
@@ -162,14 +153,6 @@ class UnsplashPhotoPicker
 
     /* TODO remove or fix */
     private fun updateUiFromState() {
-        when (currentState) {
-            UnsplashPickerState.IDLE -> {
-            }
-            UnsplashPickerState.SEARCHING -> {
-            }
-            UnsplashPickerState.PHOTO_SELECTED -> {
-            }
-        }
     }
 
     /**
@@ -199,152 +182,6 @@ class UnsplashPhotoPicker
 
     fun showPhoto(photo: UnsplashPhoto, photoSize: PhotoSize = PhotoSize.SMALL) {
         PhotoShowFragment.show(context as AppCompatActivity, photo, photoSize)
-    }
-}
-
-class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
-
-    private lateinit var adapter: UnsplashPhotoAdapter
-
-    private var isMultipleSelection = false
-    private var currentState = UnsplashPickerState.IDLE
-    private var previousState = UnsplashPickerState.IDLE
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_picker)
-
-    }
-
-    override fun onPhotosSelected(photos: List<UnsplashPhoto>) {
-        val nbOfSelectedPhotos = photos.size
-        // if multiple selection
-        if (isMultipleSelection) {
-            // update the title
-            unsplash_picker_title_text_view.text = when (nbOfSelectedPhotos) {
-                0 -> getString(R.string.unsplash)
-                1 -> getString(R.string.photo_selected)
-                else -> getString(R.string.photos_selected, nbOfSelectedPhotos)
-            }
-            // updating state
-            if (nbOfSelectedPhotos > 0) {
-                // only once, ignoring all subsequent photo selections
-                if (currentState != UnsplashPickerState.PHOTO_SELECTED) {
-                    previousState = currentState
-                    currentState = UnsplashPickerState.PHOTO_SELECTED
-                }
-                updateUiFromState()
-            } else { // no photo selected means un-selection
-                onBackPressed()
-            }
-        }
-        // if single selection send selected photo as a result
-        else if (nbOfSelectedPhotos > 0) {
-            sendPhotosAsResult()
-        }
-    }
-
-    /**
-     * Sends images in the result intent as a result for the calling activity.
-     */
-    private fun sendPhotosAsResult() {
-        // get the selected photos
-        val photos = adapter.getSelectedPhotos()
-        // track the downloads
-        //viewModel.trackDownloads(photos)
-        // send them back to the calling activity
-        val data = Intent()
-        data.putExtra("EXTRA_PHOTOS", photos.toTypedArray())
-        setResult(Activity.RESULT_OK, data)
-        finish()
-    }
-
-    override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean {
-        return false
-    }
-
-    override fun onBackPressed() {
-        when (currentState) {
-            UnsplashPickerState.IDLE -> {
-                super.onBackPressed()
-            }
-            UnsplashPickerState.SEARCHING -> {
-                // updating states
-                currentState = UnsplashPickerState.IDLE
-                previousState = UnsplashPickerState.SEARCHING
-                // updating ui
-                updateUiFromState()
-            }
-            UnsplashPickerState.PHOTO_SELECTED -> {
-                // updating states
-                currentState = if (previousState == UnsplashPickerState.SEARCHING) {
-                    UnsplashPickerState.SEARCHING
-                } else {
-                    UnsplashPickerState.IDLE
-                }
-                previousState = UnsplashPickerState.PHOTO_SELECTED
-                // updating ui
-                updateUiFromState()
-            }
-        }
-    }
-
-    private fun updateUiFromState() {
-        when (currentState) {
-            UnsplashPickerState.IDLE -> {
-                // back and search buttons visible
-                unsplash_picker_back_image_view.visibility = View.VISIBLE
-                unsplash_picker_search_image_view.visibility = View.VISIBLE
-                // cancel and done buttons gone
-                unsplash_picker_cancel_image_view.visibility = View.GONE
-                unsplash_picker_done_image_view.visibility = View.GONE
-                // edit text cleared and gone
-                if (!TextUtils.isEmpty(unsplash_picker_edit_text.text)) {
-                    unsplash_picker_edit_text.setText("")
-                }
-                unsplash_picker_edit_text.visibility = View.GONE
-                // right clear button on top of edit text gone
-                unsplash_picker_clear_image_view.visibility = View.GONE
-                // keyboard down
-                unsplash_picker_edit_text.closeKeyboard()
-                // action bar with unsplash
-                unsplash_picker_title_text_view.text = getString(R.string.unsplash)
-                // clear list selection
-                adapter.clearSelectedPhotos()
-                adapter.notifyDataSetChanged()
-            }
-            UnsplashPickerState.SEARCHING -> {
-                // back, cancel, done or search buttons gone
-                unsplash_picker_back_image_view.visibility = View.GONE
-                unsplash_picker_cancel_image_view.visibility = View.GONE
-                unsplash_picker_done_image_view.visibility = View.GONE
-                unsplash_picker_search_image_view.visibility = View.GONE
-                // edit text visible and focused
-                unsplash_picker_edit_text.visibility = View.VISIBLE
-                // right clear button on top of edit text visible
-                unsplash_picker_clear_image_view.visibility = View.VISIBLE
-                // keyboard up
-                unsplash_picker_edit_text.requestFocus()
-                unsplash_picker_edit_text.openKeyboard()
-                // clear list selection
-                adapter.clearSelectedPhotos()
-                adapter.notifyDataSetChanged()
-            }
-            UnsplashPickerState.PHOTO_SELECTED -> {
-                // back and search buttons gone
-                unsplash_picker_back_image_view.visibility = View.GONE
-                unsplash_picker_search_image_view.visibility = View.GONE
-                // cancel and done buttons visible
-                unsplash_picker_cancel_image_view.visibility = View.VISIBLE
-                unsplash_picker_done_image_view.visibility = View.VISIBLE
-                // edit text gone
-                unsplash_picker_edit_text.visibility = View.GONE
-                // right clear button on top of edit text gone
-                unsplash_picker_clear_image_view.visibility = View.GONE
-                // keyboard down
-                unsplash_picker_edit_text.closeKeyboard()
-            }
-        }
     }
 }
 

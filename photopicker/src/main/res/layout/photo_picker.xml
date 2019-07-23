@@ -42,7 +42,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/search_editText"/>
 
-            <com.unsplash.pickerandroid.photopicker.customview.EditTextView
+            <com.unsplash.pickerandroid.photopicker.presentation.EditTextView
                     android:id="@+id/search_editText"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"

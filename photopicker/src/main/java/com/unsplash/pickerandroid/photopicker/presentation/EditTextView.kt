@@ -1,4 +1,4 @@
-package com.unsplash.pickerandroid.photopicker.customview
+package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.content.Context
 import android.text.InputType.*
