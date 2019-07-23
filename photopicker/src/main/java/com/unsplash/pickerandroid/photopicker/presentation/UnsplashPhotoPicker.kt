@@ -30,61 +30,121 @@ import com.unsplash.pickerandroid.photopicker.data.UnsplashUrls
 import com.unsplash.pickerandroid.photopicker.domain.Repository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.photo_picker.*
 import kotlinx.android.synthetic.main.photo_picker.view.*
 import java.util.concurrent.TimeUnit
 
-class UnsplashPhotoPicker
+public class UnsplashPhotoPicker
 @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyle: Int = 0
 ) : ConstraintLayout(context, attributeSet, defStyle) {
 
-    // API design to be changed later
+    //region Privates
+
+    private val attrs = context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
+    private val repository: Repository = Injector.repository
+    private var adapter: UnsplashPhotoAdapter
+    private var currentWatcher: TextWatcher? = null
+
+    private inline val activity: AppCompatActivity
+        get() = context as AppCompatActivity
+
+    val onPhotoSelectedListener = object : OnPhotoSelectedListener {
+        override fun onClickPhoto(photo: UnsplashPhoto, imageView: ImageView) {
+            if (clickOpensPhoto) showPhoto(photo, showPhotoSize)
+            this@UnsplashPhotoPicker.onClickPhoto(photo, imageView)
+        }
+
+        override fun onLongClickPhoto(photo: UnsplashPhoto, imageView: ImageView) {
+            if (longClickSelectsPhoto) selectPhoto(photo)
+            this@UnsplashPhotoPicker.onLongClickPhoto(photo, imageView)
+        }
+    }
+
+    //endregion Privates
+
+    //region Public API
+
+    // XML attributes
+    /* TODO allow change colors by using color attributes */
+    var pageSize: Int = attrs.getInt(R.styleable.UnsplashPhotoPicker_pageSize, 25)
+
+    var spanCount: Int = attrs.getInt(R.styleable.UnsplashPhotoPicker_spanCount, 2)
+        set(value) {
+            field = value
+            unsplashPhotoPickerRecyclerView?.layoutManager =
+                StaggeredGridLayoutManager(value, StaggeredGridLayoutManager.VERTICAL)
+        }
+    var hasSearch: Boolean = attrs.getBoolean(R.styleable.UnsplashPhotoPicker_hasSearch, true)
+        set(value) {
+            field = value
+            searchCardView?.isVisible = value
+        }
+    var isMultipleSelection: Boolean = attrs.getBoolean(R.styleable.UnsplashPhotoPicker_isMultipleSelection, false)
+        set(value) {
+            field = value
+            resetAdapter()
+        }
+    var errorDrawable: Drawable? = attrs.getDrawable(R.styleable.UnsplashPhotoPicker_errorDrawable)
+        set(value) {
+            field = value
+            resetAdapter()
+        }
+    var placeHolderDrawable: Drawable? = attrs.getDrawable(R.styleable.UnsplashPhotoPicker_placeHolderDrawable)
+        set(value) {
+            field = value
+            resetAdapter()
+        }
+    var pickerPhotoSize: PhotoSize = PhotoSize.valueOf(attrs.getInt(R.styleable.UnsplashPhotoPicker_pickerPhotoSize, 1))
+        set(value) {
+            field = value
+            resetAdapter()
+        }
+    var showPhotoSize: PhotoSize = PhotoSize.valueOf(attrs.getInt(R.styleable.UnsplashPhotoPicker_showPhotoSize, 1))
+
+    var searchHint: String =
+        attrs.getString(R.styleable.UnsplashPhotoPicker_searchHint) ?: context.getString(R.string.search)
+        set(value) {
+            field = value
+            searchEditText?.hint = value
+        }
+
+    var photoByText: String =
+        attrs.getString(R.styleable.UnsplashPhotoPicker_photoByString) ?: context.getString(R.string.photoBy)
+
+    var onText: String = attrs.getString(R.styleable.UnsplashPhotoPicker_onString) ?: context.getString(R.string.on)
+
+    var clickOpensPhoto: Boolean = attrs.getBoolean(R.styleable.UnsplashPhotoPicker_clickOpensPhoto, true)
+
+    var longClickSelectsPhoto: Boolean = attrs.getBoolean(R.styleable.UnsplashPhotoPicker_longClickSelectsPhoto, false)
 
     // Views
     inline val unsplashPhotoPickerRecyclerView: RecyclerView?
         get() = unsplashPicker_recyclerView
 
-    inline val searchLayout: CardView?
+    inline val searchCardView: CardView?
         get() = search_cardView
 
-    inline val searchTextView: EditText?
+    inline val searchEditText: EditText?
         get() = search_editText
-
-    // XML attributes
-    /* TODO allow change colors by using color attributes */
-    var spanCount: Int = 2 // xml attribute TODO, do it later!
-    var allowSearch: Boolean = true // xml attribute TODO, do it later!
-    var allowMultipleSelection: Boolean = false // xml attribute TODO, do it later!
-    var pageSize: Int = 20 // xml attribute TODO, do it later!
-    var errorDrawable: Drawable? = null // xml attribute TODO, do it later!
-    var placeHolderDrawable: Drawable? = null // xml attribute TODO, do it later!
-    var photoSize: PhotoSize = PhotoSize.SMALL // xml attribute TODO, do it later!
-    var searchHint: String = "" // xml attribute TODO, do it later!
-    var photoByText: String = "Photo by" // xml attribute TODO, do it later!
-    var onText: String = "on" // xml attribute TODO, do it later!
-
-    private var currentWatcher: TextWatcher? = null
 
     // Callbacks
     var onSearchTextChanged: (String) -> Unit = { s -> }
         set(value) {
-            search_editText.removeTextChangedListener(currentWatcher)
+            searchEditText?.removeTextChangedListener(currentWatcher)
             field = value
             currentWatcher = SimpleTextWatcher(value)
-            search_editText.addTextChangedListener(currentWatcher)
+            searchEditText?.addTextChangedListener(currentWatcher)
         }
+    var onClickPhoto: OnClickPhotoCallback = { _, _ -> }
+    var onLongClickPhoto: OnClickPhotoCallback = { _, _ -> }
 
-    private val adapter: UnsplashPhotoAdapter
-    val repository: Repository = Injector.repository
-
+    // Other
     val selectedPhotos: List<UnsplashPhoto>
         get() = adapter.getSelectedPhotos()
 
-    private inline val activity: AppCompatActivity
-        get() = context as AppCompatActivity
+    //endregion Public API
 
     init {
         require(context is AppCompatActivity) {
@@ -94,18 +154,10 @@ class UnsplashPhotoPicker
 
         View.inflate(context, R.layout.photo_picker, this)
 
-        val onPhotoSelectedListener = object : OnPhotoSelectedListener {
-            override fun onPhotoSelected(photo: UnsplashPhoto, imageView: ImageView) {
-                showPhoto(photo, imageView = imageView)
-                trackDownloads(listOf(photo))
-            }
+        attrs.recycle()
 
-            override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean {
-                log(photo.id)
-                log(selectedPhotos.size.toString())
-                return true
-            }
-        }
+        searchCardView?.isVisible = hasSearch
+        searchEditText?.hint = searchHint
 
         val onBackPressed = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
@@ -114,87 +166,103 @@ class UnsplashPhotoPicker
                 }
             }
         }
+        activity.onBackPressedDispatcher.addCallback(onBackPressed)
 
         adapter = UnsplashPhotoAdapter(
-            allowMultipleSelection,
+            isMultipleSelection,
             onPhotoSelectedListener,
-            photoSize,
+            pickerPhotoSize,
             placeHolderDrawable,
             errorDrawable
         )
-        unsplashPicker_recyclerView?.apply {
+
+        unsplashPhotoPickerRecyclerView?.apply {
             setHasFixedSize(true)
             itemAnimator = null
             layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             adapter = this@UnsplashPhotoPicker.adapter
         }
 
-        clearSearch_imageView.isVisible = false
-        search_editText?.bindSearch()
-        search_editText?.addTextChangedListener {
+        clearSearch_imageView?.isVisible = false
+        clearSearch_imageView?.setOnClickListener {
+            searchEditText?.text = SpannableStringBuilder("")
+        }
+
+        searchEditText?.bindSearch()
+        searchEditText?.addTextChangedListener {
             if (it != null) {
-                clearSearch_imageView.isVisible = it.isNotBlank()
+                clearSearch_imageView?.isVisible = it.isNotBlank()
                 onBackPressed.isEnabled = it.isNotBlank()
             }
         }
 
-        clearSearch_imageView?.setOnClickListener {
-            search_editText?.text = SpannableStringBuilder("")
-        }
-
-        unsplashPicker_recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        unsplashPhotoPickerRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             var atTop = true
             var scrollingDown = false
             var scrollingUp = false
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                // Scrolling up
-                if (dy > 0 && !scrollingUp) {
-                    searchLayout?.slideUp()
-                    if (atTop) {
-                        recyclerView.slideUp(200, 0F)
-                        atTop = false
+                if (hasSearch) {
+                    // Scrolling up
+                    if (dy > 0 && !scrollingUp) {
+                        searchCardView?.slideUp()
+                        if (atTop) {
+                            recyclerView.slideUp(200, 0F)
+                            atTop = false
+                        }
+                        scrollingUp = true
+                        scrollingDown = false
                     }
-                    scrollingUp = true
-                    scrollingDown = false
-                }
-                // Scrolling down
-                if (dy <= 0 && !scrollingDown) {
-                    searchLayout?.slideDown()
-                    scrollingDown = true
-                    scrollingUp = false
+                    // Scrolling down
+                    if (dy <= 0 && !scrollingDown) {
+                        searchCardView?.slideDown()
+                        scrollingDown = true
+                        scrollingUp = false
+                    }
                 }
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                val into = intArrayOf(-1, -1)
-                (recyclerView.layoutManager as? StaggeredGridLayoutManager)
-                    ?.findFirstCompletelyVisibleItemPositions(into)
-                if (0 in into) {
-                    recyclerView.slideDown(
-                        150,
-                        (searchLayout!!.height.toFloat() + searchLayout!!.verticalMargin.toFloat())
-                    )
-                    atTop = true
-                }
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    this@UnsplashPhotoPicker.search_editText?.hideKeyboard()
+                if (hasSearch) {
+                    val into = IntArray(spanCount) { -1 }
+                    (recyclerView.layoutManager as? StaggeredGridLayoutManager)
+                        ?.findFirstCompletelyVisibleItemPositions(into)
+                    if (0 in into) {
+                        recyclerView.slideDown(
+                            150,
+                            (searchCardView!!.height.toFloat() + searchCardView!!.verticalMargin.toFloat())
+                        )
+                        atTop = true
+                    }
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        searchEditText?.hideKeyboard()
+                    }
                 }
             }
         })
 
-        activity.onBackPressedDispatcher.addCallback(onBackPressed)
+        // TODO: 23-Jul-19 Try updating the listeners or stuff that is used in the listeners
+    }
+
+    public fun clearSelectedPhotos() {
+        adapter.clearSelectedPhotos()
+    }
+
+    public fun selectPhoto(photo: UnsplashPhoto) {
+        adapter.selectPhoto(photo)
     }
 
     fun showPhoto(
         photo: UnsplashPhoto,
         photoSize: PhotoSize = PhotoSize.REGULAR,
-        imageView: ImageView
+        photoByString: String = this.photoByText,
+        onString: String = this.onText
     ): PhotoShowFragment {
-        search_editText.hideKeyboard()
-        activity.search_cardView?.visibility = View.INVISIBLE
-        val fragment = PhotoShowFragment.newInstance(photo, photoSize)
+        trackDownloads(listOf(photo))
+        searchEditText?.hideKeyboard()
+        searchCardView?.visibility = View.INVISIBLE
+        val fragment = PhotoShowFragment.newInstance(photo, photoSize, photoByString, onString)
         activity.supportFragmentManager
             .beginTransaction()
             .add(R.id.photoPicker_constraintLayout, fragment, PhotoShowFragment.TAG)
@@ -212,6 +280,16 @@ class UnsplashPhotoPicker
         photos.forEach { repository.trackDownload(it.links.download_location) }
     }
 
+    private fun resetAdapter() {
+        adapter = UnsplashPhotoAdapter(
+            isMultipleSelection,
+            onPhotoSelectedListener,
+            pickerPhotoSize,
+            placeHolderDrawable,
+            errorDrawable
+        )
+    }
+
     @Suppress("NOTHING_TO_INLINE")
     @SuppressLint("CheckResult")
     private inline fun EditText.bindSearch() {
@@ -225,9 +303,9 @@ class UnsplashPhotoPicker
             }.subscribe {
                 this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = true
                 adapter.submitList(it)
-                this@UnsplashPhotoPicker.unsplashPicker_recyclerView?.slideDown(
+                unsplashPhotoPickerRecyclerView?.slideDown(
                     0,
-                    (searchLayout!!.height.toFloat() + searchLayout!!.verticalMargin.toFloat())
+                    (searchCardView!!.height.toFloat() + searchCardView!!.verticalMargin.toFloat())
                 )
                 this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
             }
@@ -242,42 +320,7 @@ class UnsplashPhotoPicker
     }
 }
 
-open class SimpleTextWatcher : TextWatcher {
-    override fun afterTextChanged(s: Editable?) {}
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-    companion object {
-        operator fun invoke(onChanged: (String) -> Unit): SimpleTextWatcher {
-            return object : SimpleTextWatcher() {
-                override fun afterTextChanged(s: Editable?) {
-                    onChanged(s?.toString() ?: "")
-                }
-            }
-        }
-    }
-}
-
-inline val View.verticalMargin: Int
-    get() = (layoutParams as ViewGroup.MarginLayoutParams).let { it.topMargin + it.bottomMargin }
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun View.slideUp(duration: Int = 200, amount: Float = -this.height.toFloat()) {
-    ObjectAnimator.ofFloat(this, "translationY", amount - verticalMargin).apply {
-        this.duration = duration.toLong()
-        this.interpolator = LinearInterpolator()
-    }.start()
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun View.slideDown(duration: Int = 200, amount: Float = 0F) {
-    ObjectAnimator.ofFloat(this, "translationY", amount).apply {
-        this.duration = duration.toLong()
-        this.interpolator = LinearInterpolator()
-    }.start()
-}
-
-enum class PhotoSize {
+public enum class PhotoSize {
     THUMB, SMALL, MEDIUM, REGULAR, LARGE, FULL, RAW;
 
     fun get(urls: UnsplashUrls): String? {
@@ -289,6 +332,49 @@ enum class PhotoSize {
             LARGE -> urls.large
             FULL -> urls.full
             RAW -> urls.raw
+        }
+    }
+
+    companion object {
+        fun valueOf(ordinal: Int) = PhotoSize.values()[ordinal]
+    }
+}
+
+typealias OnClickPhotoCallback = (UnsplashPhoto, ImageView) -> Unit
+
+// Private Extensions and Utilities
+
+private inline val View.verticalMargin: Int
+    get() = (layoutParams as ViewGroup.MarginLayoutParams).let { it.topMargin + it.bottomMargin }
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun View.slideUp(duration: Int = 200, amount: Float = -this.height.toFloat()) {
+    ObjectAnimator.ofFloat(this, "translationY", amount - verticalMargin).apply {
+        this.duration = duration.toLong()
+        this.interpolator = LinearInterpolator()
+    }.start()
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun View.slideDown(duration: Int = 200, amount: Float = 0F) {
+    ObjectAnimator.ofFloat(this, "translationY", amount).apply {
+        this.duration = duration.toLong()
+        this.interpolator = LinearInterpolator()
+    }.start()
+}
+
+private open class SimpleTextWatcher : TextWatcher {
+    override fun afterTextChanged(s: Editable?) {}
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+    companion object {
+        operator fun invoke(onChanged: (String) -> Unit): SimpleTextWatcher {
+            return object : SimpleTextWatcher() {
+                override fun afterTextChanged(s: Editable?) {
+                    onChanged(s?.toString() ?: "")
+                }
+            }
         }
     }
 }

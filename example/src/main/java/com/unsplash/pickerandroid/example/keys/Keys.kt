@@ -1,0 +1,4 @@
+package com.unsplash.pickerandroid.example.keys
+
+const val UNSPLASH_ACCESS_KEY = "8c44762ec9c391e34c0028fbaf380bc8e61932055e1616687c409be6fc265bfa"
+const val UNSPLASH_SECRET_KEY = "eae2a084c981a548ef6244d494fd16f5c3361fba745023396ae18335761eb1ab"

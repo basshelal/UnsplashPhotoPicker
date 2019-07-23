@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="UnsplashPhotoPicker">
+        <attr name="pageSize" format="integer"/>
+        <attr name="spanCount" format="integer"/>
+        <attr name="hasSearch" format="boolean"/>
+        <attr name="isMultipleSelection" format="boolean"/>
+        <attr name="errorDrawable" format="reference"/>
+        <attr name="placeHolderDrawable" format="reference"/>
+        <attr name="pickerPhotoSize" format="enum">
+            <enum name="thumb" value="0"/>
+            <enum name="small" value="1"/>
+            <enum name="medium" value="2"/>
+            <enum name="regular" value="3"/>
+            <enum name="large" value="4"/>
+            <enum name="full" value="5"/>
+            <enum name="raw" value="6"/>
+        </attr>
+        <attr name="showPhotoSize" format="enum">
+            <enum name="thumb" value="0"/>
+            <enum name="small" value="1"/>
+            <enum name="medium" value="2"/>
+            <enum name="regular" value="3"/>
+            <enum name="large" value="4"/>
+            <enum name="full" value="5"/>
+            <enum name="raw" value="6"/>
+        </attr>
+        <attr name="searchHint" format="string"/>
+        <attr name="photoByString" format="string"/>
+        <attr name="onString" format="string"/>
+        <attr name="clickOpensPhoto" format="boolean"/>
+        <attr name="longClickSelectsPhoto" format="boolean"/>
+    </declare-styleable>
+
+</resources>

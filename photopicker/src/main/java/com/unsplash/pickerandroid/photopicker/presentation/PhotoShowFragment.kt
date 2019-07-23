@@ -26,7 +26,7 @@ import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.fragment_image_show.*
 import kotlinx.android.synthetic.main.photo_picker.*
 
-class PhotoShowFragment : Fragment() {
+public class PhotoShowFragment : Fragment() {
 
     private val onBackPressed = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -84,6 +84,10 @@ class PhotoShowFragment : Fragment() {
                         override fun onError(e: Exception?) {}
                     })
 
+                photoBy_textView?.apply {
+                    text = arguments!!.getString(PHOTO_BY_STRING)
+                }
+
                 user_textView?.apply {
                     text = SpannableStringBuilder(" " + photo.user.name + " ").also {
                         it.setSpan(UnderlineSpan(), 1, it.length - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -96,6 +100,10 @@ class PhotoShowFragment : Fragment() {
                                 data = Uri.parse("https://unsplash.com/@${photo.user.username}")
                             })
                     }
+                }
+
+                on_textView?.apply {
+                    text = arguments!!.getString(ON_STRING)
                 }
 
                 unsplash_textView?.apply {
@@ -131,15 +139,21 @@ class PhotoShowFragment : Fragment() {
         const val TAG = "PhotoShowFragment"
         private const val PHOTO = "PHOTO"
         private const val PHOTO_SIZE = "PHOTO_SIZE"
+        private const val PHOTO_BY_STRING = "PHOTO_BY_STRING"
+        private const val ON_STRING = "ON_STRING"
 
         fun newInstance(
             photo: UnsplashPhoto,
-            photoSize: PhotoSize = PhotoSize.REGULAR
+            photoSize: PhotoSize = PhotoSize.REGULAR,
+            photoByString: String = "Photo by",
+            onString: String = "on"
         ): PhotoShowFragment {
             return PhotoShowFragment().apply {
                 this.arguments = Bundle().also {
                     it.putParcelable(PHOTO, photo)
                     it.putString(PHOTO_SIZE, photoSize.name)
+                    it.putString(PHOTO_BY_STRING, photoByString)
+                    it.putString(ON_STRING, onString)
                 }
             }
         }

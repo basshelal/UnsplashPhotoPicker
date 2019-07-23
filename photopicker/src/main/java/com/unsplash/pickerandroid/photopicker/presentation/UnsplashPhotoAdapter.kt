@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This deals with either a single or multiple selection list.
  */
 internal class UnsplashPhotoAdapter(
-    private val isMultipleSelection: Boolean,
+    private val isMultipleSelection: Boolean = false,
     private val onPhotoSelectedListener: OnPhotoSelectedListener? = null,
     private val photoSize: PhotoSize = PhotoSize.SMALL,
     private val placeHolderDrawable: Drawable? = null,
@@ -62,35 +62,41 @@ internal class UnsplashPhotoAdapter(
                     overlay.visible = selected.keys.contains(adapterPosition)
                 }
 
-                // click listener
+                // click listeners
                 itemView.setOnLongClickListener {
-                    // selected index(es) management
-                    if (!isMultipleSelection) {
-                        // single selection mode
-                        selected.clear()
-                        selected[adapterPosition] = photo
-                    } else {
-                        // multi selection mode
-                        if (adapterPosition in selected.keys) {
-                            selected.remove(adapterPosition)
-                        } else {
-                            selected[adapterPosition] = photo
-                        }
-                        checkedImageView.visible = selected.keys.contains(adapterPosition)
-                        overlay.visible = selected.keys.contains(adapterPosition)
-                    }
-                    onPhotoSelectedListener?.onPhotoLongClick(photo, photoImageView) ?: false
+                    onPhotoSelectedListener?.onLongClickPhoto(photo, photoImageView)
+                    true
                 }
                 itemView.setOnClickListener {
-                    onPhotoSelectedListener?.onPhotoSelected(photo, photoImageView)
+                    onPhotoSelectedListener?.onClickPhoto(photo, photoImageView)
                 }
             }
         }
     }
 
-    fun getSelectedPhotos() = selected.values.toList()
+    internal fun selectPhoto(photo: UnsplashPhoto) {
+        val adapterPosition = currentList?.indexOf(photo) ?: -1
+        if (!isMultipleSelection) {
+            // single selection mode
+            selected.clear()
+            selected[adapterPosition] = photo
+        } else {
+            // multi selection mode
+            if (adapterPosition in selected.keys) {
+                selected.remove(adapterPosition)
+            } else {
+                selected[adapterPosition] = photo
+            }
+        }
+        notifyItemChanged(adapterPosition)
+    }
 
-    fun clearSelectedPhotos() = selected.clear()
+    internal fun getSelectedPhotos() = selected.values.toList()
+
+    internal fun clearSelectedPhotos() {
+        selected.clear()
+        notifyDataSetChanged()
+    }
 
     companion object {
         val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
@@ -99,7 +105,7 @@ internal class UnsplashPhotoAdapter(
         }
     }
 
-    class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    internal class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val photoImageView: AspectRatioImageView = view.item_unsplash_photo_image_view
         val nameTextView: TextView = view.item_unsplash_photo_text_view
         val checkedImageView: ImageView = view.item_unsplash_photo_checked_image_view
@@ -107,6 +113,6 @@ internal class UnsplashPhotoAdapter(
     }
 }
 
-inline var View.visible: Boolean
+private inline var View.visible: Boolean
     set(value) = if (value) this.visibility = View.VISIBLE else this.visibility = View.INVISIBLE
     get() = this.visibility == View.VISIBLE
