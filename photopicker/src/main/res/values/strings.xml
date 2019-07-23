@@ -10,5 +10,6 @@
     <string name="photos_selected">%1$d photos selected</string>
     <string name="search">Search Unsplash photos</string>
     <string name="unsplash">Unsplash</string>
-    <string name="transitionName">PhotoTransition</string>
+    <string name="photoBy">Photo by</string>
+    <string name="on">on</string>
 </resources>

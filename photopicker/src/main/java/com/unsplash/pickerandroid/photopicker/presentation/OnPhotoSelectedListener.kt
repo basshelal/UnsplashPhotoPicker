@@ -5,7 +5,7 @@ import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 
 interface OnPhotoSelectedListener {
 
-    fun onPhotosSelected(photos: List<UnsplashPhoto>)
+    fun onPhotoSelected(photo: UnsplashPhoto, imageView: ImageView)
 
     fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean
 }

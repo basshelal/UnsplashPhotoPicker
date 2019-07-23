@@ -30,6 +30,7 @@ import com.unsplash.pickerandroid.photopicker.data.UnsplashUrls
 import com.unsplash.pickerandroid.photopicker.domain.Repository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.photo_picker.*
 import kotlinx.android.synthetic.main.photo_picker.view.*
 import java.util.concurrent.TimeUnit
 
@@ -39,10 +40,6 @@ class UnsplashPhotoPicker
     attributeSet: AttributeSet? = null,
     defStyle: Int = 0
 ) : ConstraintLayout(context, attributeSet, defStyle) {
-
-    /* TODO: 23-Jul-19 Allow for a search or filter method to limit results */
-    /* TODO: 23-Jul-19 No internet empty state  */
-    /* TODO: 23-Jul-19 Clear Search on Back  */
 
     // API design to be changed later
 
@@ -57,15 +54,17 @@ class UnsplashPhotoPicker
         get() = search_editText
 
     // XML attributes
+    /* TODO allow change colors by using color attributes */
     var spanCount: Int = 2 // xml attribute TODO, do it later!
     var allowSearch: Boolean = true // xml attribute TODO, do it later!
     var allowMultipleSelection: Boolean = false // xml attribute TODO, do it later!
     var pageSize: Int = 20 // xml attribute TODO, do it later!
-
     var errorDrawable: Drawable? = null // xml attribute TODO, do it later!
     var placeHolderDrawable: Drawable? = null // xml attribute TODO, do it later!
-
     var photoSize: PhotoSize = PhotoSize.SMALL // xml attribute TODO, do it later!
+    var searchHint: String = "" // xml attribute TODO, do it later!
+    var photoByText: String = "Photo by" // xml attribute TODO, do it later!
+    var onText: String = "on" // xml attribute TODO, do it later!
 
     private var currentWatcher: TextWatcher? = null
 
@@ -77,8 +76,6 @@ class UnsplashPhotoPicker
             currentWatcher = SimpleTextWatcher(value)
             search_editText.addTextChangedListener(currentWatcher)
         }
-
-    /* TODO allow change colors by using color attributes */
 
     private val adapter: UnsplashPhotoAdapter
     val repository: Repository = Injector.repository
@@ -98,21 +95,22 @@ class UnsplashPhotoPicker
         View.inflate(context, R.layout.photo_picker, this)
 
         val onPhotoSelectedListener = object : OnPhotoSelectedListener {
-            override fun onPhotosSelected(photos: List<UnsplashPhoto>) {
-                /* TODO Use Shared Element Transitions */
-                showPhoto(photos.first())
-                trackDownloads(photos)
+            override fun onPhotoSelected(photo: UnsplashPhoto, imageView: ImageView) {
+                showPhoto(photo, imageView = imageView)
+                trackDownloads(listOf(photo))
             }
 
             override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean {
-                return false
+                log(photo.id)
+                log(selectedPhotos.size.toString())
+                return true
             }
         }
 
         val onBackPressed = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
-                if (this@UnsplashPhotoPicker.search_editText.text?.isNotBlank() == true) {
-                    this@UnsplashPhotoPicker.search_editText.text = SpannableStringBuilder("")
+                if (this@UnsplashPhotoPicker.search_editText?.text?.isNotBlank() == true) {
+                    this@UnsplashPhotoPicker.search_editText?.text = SpannableStringBuilder("")
                 }
             }
         }
@@ -132,19 +130,19 @@ class UnsplashPhotoPicker
         }
 
         clearSearch_imageView.isVisible = false
-        search_editText.bindSearch()
-        search_editText.addTextChangedListener {
+        search_editText?.bindSearch()
+        search_editText?.addTextChangedListener {
             if (it != null) {
                 clearSearch_imageView.isVisible = it.isNotBlank()
                 onBackPressed.isEnabled = it.isNotBlank()
             }
         }
 
-        clearSearch_imageView.setOnClickListener {
-            search_editText.text = SpannableStringBuilder("")
+        clearSearch_imageView?.setOnClickListener {
+            search_editText?.text = SpannableStringBuilder("")
         }
 
-        unsplashPicker_recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        unsplashPicker_recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             var atTop = true
             var scrollingDown = false
@@ -181,7 +179,7 @@ class UnsplashPhotoPicker
                     atTop = true
                 }
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    this@UnsplashPhotoPicker.search_editText.hideKeyboard()
+                    this@UnsplashPhotoPicker.search_editText?.hideKeyboard()
                 }
             }
         })
@@ -189,9 +187,19 @@ class UnsplashPhotoPicker
         activity.onBackPressedDispatcher.addCallback(onBackPressed)
     }
 
-    fun showPhoto(photo: UnsplashPhoto, photoSize: PhotoSize = PhotoSize.REGULAR): PhotoShowFragment {
+    fun showPhoto(
+        photo: UnsplashPhoto,
+        photoSize: PhotoSize = PhotoSize.REGULAR,
+        imageView: ImageView
+    ): PhotoShowFragment {
         search_editText.hideKeyboard()
-        return PhotoShowFragment.show(activity, photo, photoSize)
+        activity.search_cardView?.visibility = View.INVISIBLE
+        val fragment = PhotoShowFragment.newInstance(photo, photoSize)
+        activity.supportFragmentManager
+            .beginTransaction()
+            .add(R.id.photoPicker_constraintLayout, fragment, PhotoShowFragment.TAG)
+            .commit()
+        return fragment
     }
 
     /**
@@ -215,13 +223,13 @@ class UnsplashPhotoPicker
                 if (TextUtils.isEmpty(text)) repository.loadPhotos(pageSize)
                 else repository.searchPhotos(text.toString(), pageSize)
             }.subscribe {
-                this@UnsplashPhotoPicker.unsplashPicker_progressBar.isVisible = true
+                this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = true
                 adapter.submitList(it)
-                this@UnsplashPhotoPicker.unsplashPicker_recyclerView.slideDown(
+                this@UnsplashPhotoPicker.unsplashPicker_recyclerView?.slideDown(
                     0,
                     (searchLayout!!.height.toFloat() + searchLayout!!.verticalMargin.toFloat())
                 )
-                this@UnsplashPhotoPicker.unsplashPicker_progressBar.isVisible = false
+                this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
             }
     }
 

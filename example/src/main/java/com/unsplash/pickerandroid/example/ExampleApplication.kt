@@ -14,7 +14,7 @@ class ExampleApplication : Application() {
             this,
             UNSPLASH_ACCESS_KEY,
             UNSPLASH_SECRET_KEY,
-            true // if you want to see the http requests */
+            false // if you want to see the http requests */
         )
     }
 }

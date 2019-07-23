@@ -64,9 +64,6 @@ internal class UnsplashPhotoAdapter(
 
                 // click listener
                 itemView.setOnLongClickListener {
-                    onPhotoSelectedListener?.onPhotoLongClick(photo, photoImageView) ?: false
-                }
-                itemView.setOnClickListener {
                     // selected index(es) management
                     if (!isMultipleSelection) {
                         // single selection mode
@@ -76,10 +73,16 @@ internal class UnsplashPhotoAdapter(
                         // multi selection mode
                         if (adapterPosition in selected.keys) {
                             selected.remove(adapterPosition)
+                        } else {
+                            selected[adapterPosition] = photo
                         }
-                        notifyDataSetChanged()
+                        checkedImageView.visible = selected.keys.contains(adapterPosition)
+                        overlay.visible = selected.keys.contains(adapterPosition)
                     }
-                    onPhotoSelectedListener?.onPhotosSelected(selected.values.toList())
+                    onPhotoSelectedListener?.onPhotoLongClick(photo, photoImageView) ?: false
+                }
+                itemView.setOnClickListener {
+                    onPhotoSelectedListener?.onPhotoSelected(photo, photoImageView)
                 }
             }
         }
