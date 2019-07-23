@@ -58,8 +58,8 @@ internal class UnsplashPhotoAdapter(
 
                 // selected controls visibility
                 if (isMultipleSelection) {
-                    checkedImageView.isVisible = selected.keys.contains(adapterPosition)
-                    overlay.isVisible = selected.keys.contains(adapterPosition)
+                    checkedImageView.visible = selected.keys.contains(adapterPosition)
+                    overlay.visible = selected.keys.contains(adapterPosition)
                 }
 
                 // click listener
@@ -90,13 +90,9 @@ internal class UnsplashPhotoAdapter(
     fun clearSelectedPhotos() = selected.clear()
 
     companion object {
-        // diff util comparator
         val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
-            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
-                oldItem == newItem
-
-            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
-                oldItem == newItem
+            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
+            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
         }
     }
 
@@ -108,8 +104,6 @@ internal class UnsplashPhotoAdapter(
     }
 }
 
-inline var View.isVisible: Boolean
-    set(value) {
-        if (value) this.visibility = View.VISIBLE else this.visibility = View.INVISIBLE
-    }
+inline var View.visible: Boolean
+    set(value) = if (value) this.visibility = View.VISIBLE else this.visibility = View.INVISIBLE
     get() = this.visibility == View.VISIBLE

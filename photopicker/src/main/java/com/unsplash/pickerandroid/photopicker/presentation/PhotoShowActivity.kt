@@ -42,8 +42,8 @@ class PhotoShowFragment : Fragment() {
         }
 
         /* TODO Hyperlink the TextViews, Photo author and Unsplash website */
+        /* TODO Fade in the black background and TextViews */
 
-        // TODO swipe down should close this
     }
 
     override fun onDestroy() {
@@ -59,7 +59,7 @@ class PhotoShowFragment : Fragment() {
 
         fun newInstance(
             photo: UnsplashPhoto,
-            photoSize: PhotoSize = PhotoSize.SMALL
+            photoSize: PhotoSize = PhotoSize.REGULAR
         ): PhotoShowFragment {
             return PhotoShowFragment().apply {
                 this.arguments = Bundle().also {
@@ -72,7 +72,7 @@ class PhotoShowFragment : Fragment() {
         fun show(
             activity: AppCompatActivity,
             photo: UnsplashPhoto,
-            photoSize: PhotoSize = PhotoSize.SMALL
+            photoSize: PhotoSize = PhotoSize.REGULAR
         ): PhotoShowFragment {
             activity.search_cardView?.visibility = View.INVISIBLE
             val fragment = newInstance(photo, photoSize)
