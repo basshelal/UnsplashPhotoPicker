@@ -9,5 +9,6 @@
     <color name="pickerColorDarkOverlay">#dd000000</color>
     <color name="pickerColorGradientOverlay">#44000000</color>
     <color name="pickerColorSelectedOverlay">#66ffffff</color>
-    <color name="transluscent">#8FFFFFFF</color>
+    <color name="transluscentWhite">#8FFFFFFF</color>
+    <color name="transluscentBlack">#8F000000</color>
 </resources>

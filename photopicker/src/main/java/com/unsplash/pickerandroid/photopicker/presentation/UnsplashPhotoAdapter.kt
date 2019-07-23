@@ -1,6 +1,7 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
+import com.unsplash.pickerandroid.photopicker.customview.PhotoSize
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
 
@@ -19,12 +21,16 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This is using the Android paging library to display an infinite list of photos.
  * This deals with either a single or multiple selection list.
  */
-open class UnsplashPhotoAdapter constructor(private val isMultipleSelection: Boolean) :
-    PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
+internal class UnsplashPhotoAdapter(
+    private val isMultipleSelection: Boolean,
+    private val onPhotoSelectedListener: OnPhotoSelectedListener? = null,
+    private val photoSize: PhotoSize = PhotoSize.SMALL,
+    private val placeHolderDrawable: Drawable? = null,
+    private val errorDrawable: Drawable? = null
+) : PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
     // Key is index, Value is UnsplashPhoto
     private val selected = LinkedHashMap<Int, UnsplashPhoto>()
-    var onPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return PhotoViewHolder(
@@ -40,48 +46,49 @@ open class UnsplashPhotoAdapter constructor(private val isMultipleSelection: Boo
                 // image
                 photoImageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
                 itemView.setBackgroundColor(Color.parseColor(photo.color))
-                Picasso.get().load(photo.urls.small)
-                    .into(photoImageView)
+                val request = Picasso.get()
+                    .load(photoSize.get(photo.urls))
+
+                placeHolderDrawable?.also { request.placeholder(it) }
+                errorDrawable?.also { request.error(it) }
+
+                request.into(photoImageView)
 
                 // photograph name
                 nameTextView.text = photo.user.name
 
                 // selected controls visibility
-                checkedImageView.visibility =
-                    if (selected.keys.contains(adapterPosition)) View.VISIBLE else View.INVISIBLE
-                overlay.visibility =
-                    if (selected.keys.contains(adapterPosition)) View.VISIBLE else View.INVISIBLE
+                if (isMultipleSelection) {
+                    checkedImageView.isVisible = selected.keys.contains(adapterPosition)
+                    overlay.isVisible = selected.keys.contains(adapterPosition)
+                }
 
                 // click listener
+                itemView.setOnLongClickListener {
+                    onPhotoSelectedListener?.onPhotoLongClick(photo, photoImageView) ?: false
+                }
                 itemView.setOnClickListener {
                     // selected index(es) management
-                    if (adapterPosition in selected.keys) {
-                        selected.remove(adapterPosition)
-                    } else {
-                        if (!isMultipleSelection) selected.clear()
+                    if (!isMultipleSelection) {
+                        // single selection mode
+                        selected.clear()
                         selected[adapterPosition] = photo
-                    }
-                    if (isMultipleSelection) {
+                    } else {
+                        // multi selection mode
+                        if (adapterPosition in selected.keys) {
+                            selected.remove(adapterPosition)
+                        }
                         notifyDataSetChanged()
                     }
                     onPhotoSelectedListener?.onPhotosSelected(selected.values.toList())
-                    // change title text
-                    holder.itemView.setOnLongClickListener {
-                        onPhotoSelectedListener?.onPhotoLongClick(photo, photoImageView)
-                        false
-                    }
                 }
             }
         }
     }
 
-    fun getSelectedPhotos(): List<UnsplashPhoto> {
-        return selected.values.toList()
-    }
+    fun getSelectedPhotos() = selected.values.toList()
 
-    fun clearSelectedPhotos() {
-        selected.clear()
-    }
+    fun clearSelectedPhotos() = selected.clear()
 
     companion object {
         // diff util comparator
@@ -101,3 +108,9 @@ open class UnsplashPhotoAdapter constructor(private val isMultipleSelection: Boo
         val overlay: View = view.item_unsplash_photo_overlay
     }
 }
+
+inline var View.isVisible: Boolean
+    set(value) {
+        if (value) this.visibility = View.VISIBLE else this.visibility = View.INVISIBLE
+    }
+    get() = this.visibility == View.VISIBLE

@@ -13,22 +13,18 @@ object UnsplashPhotoPicker {
 
     private lateinit var secretKey: String
 
-    private const val DEFAULT_PAGE_SIZE = 20
-
-    private var pageSize: Int = DEFAULT_PAGE_SIZE
-
-    private var isLoggingEnabled = false
+    var isLoggingEnabled: Boolean = false
 
     fun init(
         application: Application,
         accessKey: String,
         secretKey: String,
-        pageSize: Int = DEFAULT_PAGE_SIZE
+        isLoggingEnabled: Boolean = false
     ): UnsplashPhotoPicker {
         this.application = application
         this.accessKey = accessKey
         this.secretKey = secretKey
-        this.pageSize = pageSize
+        this.isLoggingEnabled = isLoggingEnabled
         return this
     }
 
@@ -42,17 +38,5 @@ object UnsplashPhotoPicker {
 
     fun getSecretKey(): String {
         return secretKey
-    }
-
-    fun getPageSize(): Int {
-        return pageSize
-    }
-
-    fun setLoggingEnabled(isEnabled: Boolean) {
-        isLoggingEnabled = isEnabled
-    }
-
-    fun isLoggingEnabled(): Boolean {
-        return isLoggingEnabled
     }
 }

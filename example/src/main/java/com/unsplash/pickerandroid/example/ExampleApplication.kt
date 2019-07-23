@@ -13,8 +13,8 @@ class ExampleApplication : Application() {
         UnsplashPhotoPicker.init(
             this,
             UNSPLASH_ACCESS_KEY,
-            UNSPLASH_SECRET_KEY
-            /* optional page size (number of photos per page) */
-        ).setLoggingEnabled(true) // if you want to see the http requests */
+            UNSPLASH_SECRET_KEY,
+            true // if you want to see the http requests */
+        )
     }
 }

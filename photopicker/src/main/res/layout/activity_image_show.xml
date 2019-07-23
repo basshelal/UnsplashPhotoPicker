@@ -2,19 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/image_show_layout"
+        android:background="@color/transluscentBlack"
+        android:id="@+id/imageShow_constraintLayout"
         android:layout_width="match_parent"
         android:clickable="true"
         android:focusable="true"
         android:layout_height="match_parent">
 
-    <com.github.chrisbanes.photoview.PhotoView
+    <com.unsplash.pickerandroid.photopicker.customview.AspectRatioPhotoView
             android:id="@+id/image_photoView"
             android:layout_height="0dp"
             android:layout_width="0dp"
             android:layout_margin="8dp"
-            android:src="@color/colorPrimary"
             android:contentDescription="@string/photo"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -23,6 +22,7 @@
 
     <ProgressBar
             android:id="@+id/image_progressBar"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -40,23 +40,26 @@
             android:layout_margin="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_photoView"
             app:layout_constraintBottom_toBottomOf="parent">
         <TextView
-                tools:text="Photo By "
+                android:text="Photo By "
+                android:textColor="@color/pickerColorBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         <TextView
-                tools:text="Leeroy Jenkins "
+                android:text="Leeroy Jenkins "
+                android:textColor="@color/pickerColorBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"/>
         <TextView
-                tools:text="on "
+                android:text="on "
+                android:textColor="@color/pickerColorBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         <TextView
-                tools:text="@string/unsplash"
+                android:text="@string/unsplash"
+                android:textColor="@color/pickerColorBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"/>

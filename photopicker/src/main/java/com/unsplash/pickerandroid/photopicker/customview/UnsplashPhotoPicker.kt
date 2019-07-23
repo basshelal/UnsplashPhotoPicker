@@ -14,7 +14,7 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -25,8 +25,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
-import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import com.unsplash.pickerandroid.photopicker.data.UnsplashUrls
 import com.unsplash.pickerandroid.photopicker.domain.Repository
 import com.unsplash.pickerandroid.photopicker.presentation.*
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -59,8 +59,11 @@ class UnsplashPhotoPicker
     var allowSearch: Boolean = true // xml attribute TODO, do it later!
     var allowMultipleSelection: Boolean = false // xml attribute TODO, do it later!
     var pageSize: Int = 20 // xml attribute TODO, do it later!
-    var errorImage: Drawable? = null // xml attribute TODO, do it later!
-    var placeHolderImage: Drawable? = null // xml attribute TODO, do it later!
+
+    var errorDrawable: Drawable? = null // xml attribute TODO, do it later!
+    var placeHolderDrawable: Drawable? = null // xml attribute TODO, do it later!
+
+    var photoSize: PhotoSize = PhotoSize.SMALL // xml attribute TODO, do it later!
 
     private var currentWatcher: TextWatcher? = null
 
@@ -73,18 +76,13 @@ class UnsplashPhotoPicker
             search_editText.addTextChangedListener(currentWatcher)
         }
 
-    inline var onPhotoSelectedListener: OnPhotoSelectedListener?
-        set(value) {
-            adapter.onPhotoSelectedListener = value
-        }
-        get() = adapter.onPhotoSelectedListener
+    /* TODO allow change colors by using color attributes */
 
-    /* TODO If we allow to show each image upon click on long click we must use Shared Element Transitions */
-
-    /* TODO make the name of the author of the image be a clickable link that will send you to the image url itself*/
-
-    val adapter: UnsplashPhotoAdapter
+    private val adapter: UnsplashPhotoAdapter
     val repository: Repository = Injector.repository
+
+    val selectedPhotos: List<UnsplashPhoto>
+        get() = adapter.getSelectedPhotos()
 
     // State
     private var currentState = UnsplashPickerState.IDLE
@@ -93,7 +91,24 @@ class UnsplashPhotoPicker
     init {
         View.inflate(context, R.layout.photo_picker, this)
 
-        adapter = UnsplashPhotoAdapter(allowMultipleSelection)
+        val onPhotoSelectedListener = object : OnPhotoSelectedListener {
+            override fun onPhotosSelected(photos: List<UnsplashPhoto>) {
+                /* TODO Use Shared Element Transitions */
+                showPhoto(photos.first())
+            }
+
+            override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean {
+                return false
+            }
+        }
+
+        adapter = UnsplashPhotoAdapter(
+            allowMultipleSelection,
+            onPhotoSelectedListener,
+            photoSize,
+            placeHolderDrawable,
+            errorDrawable
+        )
         unsplashPicker_recyclerView?.apply {
             setHasFixedSize(true)
             itemAnimator = null
@@ -101,7 +116,7 @@ class UnsplashPhotoPicker
             adapter = this@UnsplashPhotoPicker.adapter
         }
 
-        bindSearch(search_editText)
+        search_editText.bindSearch()
 
         search_editText.setOnClickListener {
             currentState = UnsplashPickerState.SEARCHING
@@ -111,8 +126,6 @@ class UnsplashPhotoPicker
         clearSearch_imageView.setOnClickListener {
             search_editText.text = SpannableStringBuilder("")
         }
-
-        /* TODO trying to make search bar hide like Gmail */
 
         unsplashPicker_recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -147,6 +160,7 @@ class UnsplashPhotoPicker
         })
     }
 
+    /* TODO remove or fix */
     private fun updateUiFromState() {
         when (currentState) {
             UnsplashPickerState.IDLE -> {
@@ -158,20 +172,6 @@ class UnsplashPhotoPicker
         }
     }
 
-    @SuppressLint("CheckResult")
-    private fun bindSearch(editText: EditText) {
-        RxTextView.textChanges(editText)
-            .debounce(500, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .observeOn(Schedulers.io())
-            .switchMap { text ->
-                if (TextUtils.isEmpty(text)) repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
-                else repository.searchPhotos(text.toString(), UnsplashPhotoPicker.getPageSize())
-            }.subscribe {
-                adapter.submitList(it)
-            }
-    }
-
     /**
      * To abide by the API guidelines,
      * you need to trigger a GET request to this endpoint every time your application performs a download of a photo
@@ -180,6 +180,25 @@ class UnsplashPhotoPicker
      */
     private fun trackDownloads(photos: List<UnsplashPhoto>) {
         photos.forEach { repository.trackDownload(it.links.download_location) }
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    @SuppressLint("CheckResult")
+    private inline fun EditText.bindSearch() {
+        RxTextView.textChanges(this)
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
+            .switchMap { text ->
+                if (TextUtils.isEmpty(text)) repository.loadPhotos(pageSize)
+                else repository.searchPhotos(text.toString(), pageSize)
+            }.subscribe {
+                adapter.submitList(it)
+            }
+    }
+
+    fun showPhoto(photo: UnsplashPhoto, photoSize: PhotoSize = PhotoSize.SMALL) {
+        PhotoShowFragment.show(context as AppCompatActivity, photo, photoSize)
     }
 }
 
@@ -240,8 +259,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         finish()
     }
 
-    override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView) {
-        startActivity(PhotoShowActivity.getStartingIntent(this, photo.urls.small))
+    override fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean {
+        return false
     }
 
     override fun onBackPressed() {
@@ -349,13 +368,29 @@ fun View.slideUp(duration: Int = 200) {
     val verticalMargin = (layoutParams as ViewGroup.MarginLayoutParams).let { it.topMargin + it.bottomMargin }
     ObjectAnimator.ofFloat(this, "translationY", -this.height.toFloat() - verticalMargin).apply {
         this.duration = duration.toLong()
-        this.interpolator = AccelerateDecelerateInterpolator()
+        this.interpolator = LinearInterpolator()
     }.start()
 }
 
 fun View.slideDown(duration: Int = 200) {
     ObjectAnimator.ofFloat(this, "translationY", 0F).apply {
         this.duration = duration.toLong()
-        this.interpolator = AccelerateDecelerateInterpolator()
+        this.interpolator = LinearInterpolator()
     }.start()
+}
+
+enum class PhotoSize {
+    THUMB, SMALL, MEDIUM, REGULAR, LARGE, FULL, RAW;
+
+    fun get(urls: UnsplashUrls): String? {
+        return when (this) {
+            THUMB -> urls.thumb
+            SMALL -> urls.small
+            MEDIUM -> urls.medium
+            REGULAR -> urls.regular
+            LARGE -> urls.large
+            FULL -> urls.full
+            RAW -> urls.raw
+        }
+    }
 }

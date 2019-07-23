@@ -11,7 +11,7 @@
         android:focusableInTouchMode="true">
 
     <androidx.cardview.widget.CardView
-            app:cardBackgroundColor="@color/transluscent"
+            app:cardBackgroundColor="@color/transluscentWhite"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/search_cardView"
             android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:layout_marginEnd="16dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:background="@color/transluscent"
+                android:background="@color/transluscentWhite"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

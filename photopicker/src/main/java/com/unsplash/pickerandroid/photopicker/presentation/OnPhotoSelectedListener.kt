@@ -7,5 +7,5 @@ interface OnPhotoSelectedListener {
 
     fun onPhotosSelected(photos: List<UnsplashPhoto>)
 
-    fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView)
+    fun onPhotoLongClick(photo: UnsplashPhoto, imageView: ImageView): Boolean
 }
