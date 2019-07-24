@@ -4,7 +4,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/photoPicker_constraintLayout"
-        android:background="@color/pickerColorBackground"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -12,7 +11,7 @@
         android:focusableInTouchMode="true">
 
     <androidx.cardview.widget.CardView
-            app:cardBackgroundColor="@color/pickerSearchBarBackground"
+            app:cardBackgroundColor="@color/photoPickerPrivate_searchBarBackground"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/search_cardView"
             android:layout_width="match_parent"
@@ -25,7 +24,7 @@
             android:layout_marginBottom="4dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:background="@color/pickerSearchBarBackground"
+                android:background="@color/photoPickerPrivate_searchBarBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -36,7 +35,7 @@
                     android:padding="12dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_search_24dp"
-                    android:tint="@color/colorPrimaryDark"
+                    android:tint="@color/photoPickerPrivate_searchBarImageTint"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -57,6 +56,7 @@
                     android:imeOptions="actionDone"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                     android:textSize="22sp"
+                    android:textColor="@color/photoPickerPrivate_searchBarImageTint"
                     android:hint="@string/search"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +71,7 @@
                     android:padding="12dp"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/ic_clear_24dp"
-                    android:tint="@color/colorPrimaryDark"
+                    android:tint="@color/photoPickerPrivate_searchBarImageTint"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -99,7 +99,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:background="#00000000"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

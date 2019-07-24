@@ -3,7 +3,7 @@ package com.unsplash.pickerandroid.photopicker.presentation
 import android.widget.ImageView
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 
-interface OnPhotoSelectedListener {
+internal interface OnPhotoSelectedListener {
 
     fun onClickPhoto(photo: UnsplashPhoto, imageView: ImageView)
 

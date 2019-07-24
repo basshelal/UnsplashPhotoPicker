@@ -5,11 +5,14 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#181818</color>
 
-    <!--Override these colors to change the look of the Views-->
-    <color name="pickerColorBackground">#ffffffff</color>
-    <color name="pickerColorDarkOverlay">#dd000000</color>
-    <color name="pickerColorGradientOverlay">#44000000</color>
-    <color name="pickerColorSelectedOverlay">#66ffffff</color>
-    <color name="pickerSearchBarBackground">#8FFFFFFF</color>
-    <color name="pickerShowPhotoBackground">#8F000000</color>
+    <!--                         DON'T OVERRIDE THESE!                          -->
+    <!-- Use the Xml attributes for UnsplashPhotoPicker to change colors instead-->
+
+    <color name="photoPickerPrivate_pickerColorBackground">#ffffffff</color>
+    <color name="photoPickerPrivate_searchBarBackground">#8FFFFFFF</color>
+    <color name="photoPickerPrivate_searchBarImageTint">#FF000000</color>
+    <color name="photoPickerPrivate_showPhotoBackground">#8F000000</color>
+    <color name="photoPickerPrivate_showPhotoTextColor">#ffffffff</color>
+    <color name="photoPickerPrivate_colorGradientOverlay">#44000000</color>
+    <color name="photoPickerPrivate_colorSelectedOverlay">#66ffffff</color>
 </resources>

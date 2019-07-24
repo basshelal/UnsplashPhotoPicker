@@ -1,9 +1,7 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.content.Context
-import android.text.InputType.*
 import android.util.AttributeSet
-import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.AppCompatEditText
 
 internal class EditTextView
@@ -21,18 +19,6 @@ internal class EditTextView
             isFocusableInTouchMode = value
             isFocusable = value
             isClickable = value
-        }
-    var isMultiLine: Boolean = false
-        set(value) {
-            field = value
-            if (value) {
-                imeOptions = EditorInfo.IME_ACTION_DONE
-                setRawInputType(
-                    TYPE_CLASS_TEXT or
-                            TYPE_TEXT_FLAG_AUTO_CORRECT or
-                            TYPE_TEXT_FLAG_CAP_SENTENCES
-                )
-            }
         }
 
     init {

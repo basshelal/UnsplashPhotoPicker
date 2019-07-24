@@ -89,7 +89,7 @@ public class PhotoShowFragment : Fragment() {
                 }
 
                 user_textView?.apply {
-                    text = SpannableStringBuilder(" " + photo.user.name + " ").also {
+                    text = SpannableStringBuilder(" ${photo.user.name} ").also {
                         it.setSpan(UnderlineSpan(), 1, it.length - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                     setOnClickListener {
@@ -107,8 +107,8 @@ public class PhotoShowFragment : Fragment() {
                 }
 
                 unsplash_textView?.apply {
-                    text = SpannableStringBuilder(" " + text).also {
-                        it.setSpan(UnderlineSpan(), 1, it.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    text = SpannableStringBuilder(" $text ").also {
+                        it.setSpan(UnderlineSpan(), 1, it.length - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                     setOnClickListener {
                         context.startActivity(
@@ -136,7 +136,7 @@ public class PhotoShowFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "PhotoShowFragment"
+        const val TAG = "UnsplashPhotoPickerPhotoShowFragment"
         private const val PHOTO = "PHOTO"
         private const val PHOTO_SIZE = "PHOTO_SIZE"
         private const val PHOTO_BY_STRING = "PHOTO_BY_STRING"

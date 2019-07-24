@@ -2,13 +2,14 @@
 <resources>
 
     <declare-styleable name="UnsplashPhotoPicker">
-        <attr name="pageSize" format="integer"/>
-        <attr name="spanCount" format="integer"/>
-        <attr name="hasSearch" format="boolean"/>
-        <attr name="isMultipleSelection" format="boolean"/>
-        <attr name="errorDrawable" format="reference"/>
-        <attr name="placeHolderDrawable" format="reference"/>
-        <attr name="pickerPhotoSize" format="enum">
+        <attr name="photoPicker_pageSize" format="integer"/>
+        <attr name="photoPicker_spanCount" format="integer"/>
+        <attr name="photoPicker_hasSearch" format="boolean"/>
+        <attr name="photoPicker_persistentSearch" format="boolean"/>
+        <attr name="photoPicker_isMultipleSelection" format="boolean"/>
+        <attr name="photoPicker_errorDrawable" format="reference"/>
+        <attr name="photoPicker_placeHolderDrawable" format="reference"/>
+        <attr name="photoPicker_pickerPhotoSize" format="enum">
             <enum name="thumb" value="0"/>
             <enum name="small" value="1"/>
             <enum name="medium" value="2"/>
@@ -17,7 +18,7 @@
             <enum name="full" value="5"/>
             <enum name="raw" value="6"/>
         </attr>
-        <attr name="showPhotoSize" format="enum">
+        <attr name="photoPicker_showPhotoSize" format="enum">
             <enum name="thumb" value="0"/>
             <enum name="small" value="1"/>
             <enum name="medium" value="2"/>
@@ -26,11 +27,11 @@
             <enum name="full" value="5"/>
             <enum name="raw" value="6"/>
         </attr>
-        <attr name="searchHint" format="string"/>
-        <attr name="photoByString" format="string"/>
-        <attr name="onString" format="string"/>
-        <attr name="clickOpensPhoto" format="boolean"/>
-        <attr name="longClickSelectsPhoto" format="boolean"/>
+        <attr name="photoPicker_searchHint" format="string"/>
+        <attr name="photoPicker_photoByString" format="string"/>
+        <attr name="photoPicker_onString" format="string"/>
+        <attr name="photoPicker_clickOpensPhoto" format="boolean"/>
+        <attr name="photoPicker_longClickSelectsPhoto" format="boolean"/>
     </declare-styleable>
 
 </resources>
