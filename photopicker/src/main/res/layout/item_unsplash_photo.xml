@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <com.unsplash.pickerandroid.photopicker.presentation.AspectRatioImageView
+    <com.github.basshelal.unsplashpicker.presentation.AspectRatioImageView
             android:contentDescription="@string/photo"
             android:id="@+id/item_unsplash_photo_image_view"
             android:layout_width="0dp"

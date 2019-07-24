@@ -1,25 +1,26 @@
-# Unsplash Photo Picker for Android
-
-[![License](https://img.shields.io/github/license/unsplash/unsplash-photopicker-android.svg?style=flat-square)](https://github.com/unsplash/unsplash-photopicker-android)
-[![Download](https://api.bintray.com/packages/unsplash/unsplash-photopicker-android/com.unsplash.pickerandroid.photopicker/images/download.svg) ](https://bintray.com/unsplash/unsplash-photopicker-android/com.unsplash.pickerandroid.photopicker/_latestVersion)
-
-UnsplashPhotoPicker is an Android UI component that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
-
-iOS photo picker [here](https://github.com/unsplash/unsplash-photopicker-ios).
+# Unsplash Photo Picker
 
 ![Unsplash Photo Picker for Android preview](https://github.com/unsplash/unsplash-photopicker-android/blob/dev/unsplash-photo-picker-android.png "Unsplash Photo Picker for Android")
 
+[![License](https://img.shields.io/github/license/basshelal/UnsplashPhotoPicker.svg)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/LICENSE)
+
+[`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/unsplash/pickerandroid/photopicker/presentation/UnsplashPhotoPicker.kt)
+ is a modular Android View that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
+
+Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsplash/unsplash-photopicker-android).
+
 ## Table of Contents
 
-- [Description](#description)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Gradle](#gradle)
-- [Usage](#usage)
-  - [Configuration](#configuration)
-  - [Presenting](#presenting)
-  - [Using the results](#using-the-results)
-- [License](#license)
+* [Description](#description)
+* [Requirements](#requirements)
+* [Installation](#installation)
+  * [Gradle](#gradle)
+* [Usage](#usage)
+  * [Configuration](#configuration)
+  * [Presenting](#presenting)
+  * [Using the results](#using-the-results)
+  * [Special Thanks](#special-thanks)
+* [License](#license)
 
 ## Description
 
@@ -105,6 +106,8 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ```
 
 See [UnsplashPhoto.kt](https://github.com/unsplash/unsplash-photopicker-android/blob/master/photopicker/src/main/java/com/unsplash/pickerandroid/photopicker/data/UnsplashPhoto.kt) for more details.
+
+## Special Thanks
 
 ## License
 

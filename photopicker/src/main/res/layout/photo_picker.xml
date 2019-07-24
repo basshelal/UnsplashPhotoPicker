@@ -42,9 +42,10 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/search_editText"/>
+                    app:layout_constraintEnd_toStartOf="@id/search_editText"
+                    android:contentDescription="@string/search"/>
 
-            <com.unsplash.pickerandroid.photopicker.presentation.EditTextView
+            <com.github.basshelal.unsplashpicker.presentation.EditTextView
                     android:id="@+id/search_editText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -78,7 +79,9 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/search_editText"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="@string/clear"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
