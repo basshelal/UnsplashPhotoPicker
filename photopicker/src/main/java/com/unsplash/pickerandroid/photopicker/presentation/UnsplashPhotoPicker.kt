@@ -129,11 +129,11 @@ public class UnsplashPhotoPicker
             searchEditText?.hint = value
         }
 
-    var photoByText: String =
+    var photoByString: String =
         attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_photoByString)
             ?: context.getString(R.string.photoBy)
 
-    var onText: String =
+    var onString: String =
         attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_onString) ?: context.getString(R.string.on)
 
     var clickOpensPhoto: Boolean =
@@ -278,8 +278,8 @@ public class UnsplashPhotoPicker
     public fun showPhoto(
         photo: UnsplashPhoto,
         photoSize: PhotoSize = PhotoSize.REGULAR,
-        photoByString: String = this.photoByText,
-        onString: String = this.onText
+        photoByString: String = this.photoByString,
+        onString: String = this.onString
     ): PhotoShowFragment {
         trackDownloads(listOf(photo))
         searchEditText?.hideKeyboard()
