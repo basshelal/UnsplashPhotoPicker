@@ -1,11 +1,11 @@
-# Unsplash Photo Picker
+# Unsplash Photo Picker (Not yet finished!)
 
 ![Unsplash Photo Picker for Android preview](https://github.com/unsplash/unsplash-photopicker-android/blob/dev/unsplash-photo-picker-android.png "Unsplash Photo Picker for Android")
 
 [![License](https://img.shields.io/github/license/basshelal/UnsplashPhotoPicker.svg)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/LICENSE)
 
-[`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/unsplash/pickerandroid/photopicker/presentation/UnsplashPhotoPicker.kt)
- is a modular Android View that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
+[`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt)
+ is a modular and customizable Android View that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
 
 Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsplash/unsplash-photopicker-android).
 
@@ -14,110 +14,156 @@ Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsp
 * [Description](#description)
 * [Requirements](#requirements)
 * [Installation](#installation)
-  * [Gradle](#gradle)
 * [Usage](#usage)
-  * [Configuration](#configuration)
-  * [Presenting](#presenting)
-  * [Using the results](#using-the-results)
-  * [Special Thanks](#special-thanks)
+  * [Initial Configuration](#initial-configuration)
+  * [Xml Attributes](#xml-attributes)
+  * [Click Listeners](#click-listeners)
+* [Special Thanks](#special-thanks)
 * [License](#license)
 
 ## Description
 
-`UnsplashPhotoPicker` is a Kotlin object you use to initialize the library. You present the picker by navigating to the `UnsplashPickerActivity` to offer your users to select one or multiple photos from Unsplash. Once they have selected photos, the `UnsplashPickerActivity` returns `UnsplashPhoto` objects that you can use in your app.
+This library allows you to add a fully functioning photo picker which uses free high-quality photos photos from [Unsplash.com](https://unsplash.com/).
+
+You can allow for single or multiple selections and enlarge any photo to view in fullscreen.
+
+The difference between this library and the [one it is based off of](https://github.com/unsplash/unsplash-photopicker-android)
+ is that this is more modular and allows for a greater level of customization, convenience and features.
+ 
+This library provides you with a `View` you can use in your XML layouts with attributes that allow you to customize the view to your preference.
+The original library only allowed you to launch an Activity with the picker in it, whereas here you can use the picker (with the search bar) 
+as a `View` so it can be used as a child in `ViewGroup`s in `Fragment`s or `Activity`s.
+
+This library also provides you with easier ways to show and select photos and click listeners to listen to click and long click events on each photo.
+
+In a nutshell this library adds more features and customization to the original making it easier to use for the developer.
 
 ## Requirements
 
-- Android minimum API 21+
-- Android Studio 3.3+
-- Kotlin 1.3+
-- Use AndroidX artifacts when creating your project
-- [Unsplash API Access Key and Secret Key](https://unsplash.com/documentation#registering-your-application)
+* Min API 21 and AndroidX
+* Kotlin 1.3+
+* [Unsplash API Access Key and Secret Key](https://unsplash.com/documentation#registering-your-application)
 
 ## Installation
 
-### Gradle
-
-To integrate `UnsplashPhotoPicker` into your Android Studio project using Gradle, specify in your project `build.gradle` file:
+Step 1. Add the JitPack repository to your root build.gradle at the end of repositories:
 
 ```gradle
 allprojects {
-   repositories {
-      maven { url  "https://dl.bintray.com/unsplash/unsplash-photopicker-android" }
-   }
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
-And in your app module `build.gradle` file:
+
+Step 2. Add the dependency in your app module `build.gradle` file:
 
 ```gradle
 dependencies {
-   implementation 'com.unsplash.pickerandroid:photopicker:x.y.z'
+    implementation 'com.github.basshelal:UnsplashPhotoPicker:1.0.0'
 }
 ```
 
 ## Usage
 
-❗️Before you get started, you need to register as a developer on our [Developer](https://unsplash.com/developers) portal. Once registered, create a new app to get an **Access Key** and a **Secret Key**.
+__**IMPORTANT!**__
 
-### Configuration
+️Before you get started, you need to register as a developer on the Unsplash [Developer](https://unsplash.com/developers) portal.
+Once registered, create a new app to get an **Access Key** and a **Secret Key**.
+ 
+ Remember you must keep **both** keys secret.
 
-The `UnsplashPhotoPicker` is a Kotlin object you need to use in order to initialize the library. Add this in your custom application class `onCreate` method:
+### Initial Configuration
+
+You need to call [`UnsplashPhotoPickerConfig.init(...)`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/UnsplashPhotoPickerConfig.kt#L39)
+in your custom `Application` class's `onCreate()`, with the required arguments.
 
 ```kotlin
-UnsplashPhotoPicker.init(
-            this, // application
-            "your access key",
-            "your secret key"
-            /* optional page size */
+class App : Application() {
+    
+    override fun onCreate() {
+        super.onCreate()
+        
+        UnsplashPhotoPickerConfig.init(
+            application = this,
+            accessKey = "your access key",
+            secretKey = "your secret key",
+            isLoggingEnabled = false // optional to enable full HTTP logging
         )
+    }
+}
+
+
 ```
-| Property                      | Type          | Optional/Required | Default |
-|-------------------------------|---------------|-------------------|---------|
-| **`application`**             | _Application_ | Required          | N/A     |
-| **`accessKey`**               | _String_      | Required          | N/A     |
-| **`secretKey`**               | _String_      | Required          | N/A     |
-| **`pageSize`**                | _Int_         | Optional          | `20`    |
+### Xml Attributes
 
-### Presenting
+All xml attributes begin with `photoPicker_`.
 
-In order to access the picker screen you need to navigate to the `UnsplashPickerActivity`. This activity has a `getStartingIntent` method to create the `Intent` needed:
+| name | format | default value |
+|------|--------|---------------|
+|photoPicker_spanCount|integer|2|
+|photoPicker_hasSearch|boolean |true|
+|photoPicker_persistentSearch|boolean|false|
+|photoPicker_isMultipleSelection|boolean|false|
+|photoPicker_errorDrawable|drawable|null|
+|photoPicker_placeHolderDrawable|drawable|null|
+|photoPicker_pickerPhotoSize|photoSize|small|
+|photoPicker_showPhotoSize|photoSize|small|
+|photoPicker_searchHint|string|"Search Unsplash Photos"|
+|photoPicker_photoByString"|string|"Photo by"|
+|photoPicker_onString|string|"on"|
+|photoPicker_clickOpensPhoto|boolean|true|
+|photoPicker_longClickSelectsPhoto|boolean|false|
+
+PhotoSize enum:
+thumb, small, medium, regular, large, full, raw
+See the [`PhotoSize enum class`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt#L549)
+
+### Click Listeners
+
+You can listen to click events on any photo in the picker using `onClickPhoto` and `onLongClickPhoto` 
+which are both anonymous functions (lambdas) which have the `UnsplashPhoto` as their first parameter
+and the clicked `ImageView` as the second parameter.
 
 ```kotlin
-startActivityForResult(
-                UnsplashPickerActivity.getStartingIntent(
-                    this, // context
-                    isMultipleSelection
-                ), REQUEST_CODE
-            )
-```
-
-### Using the results
-
-Your calling activity must use a `startActivityForResult` method to be able to retrieve the selected `UnsplashPhoto`:
-
-```kotlin
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            val photos: ArrayList<UnsplashPhoto>? = data?.getParcelableArrayListExtra(UnsplashPickerActivity.EXTRA_PHOTOS)
-            // use your photos here
-        }
+unsplashPhotoPicker.apply {
+    onClickPhoto = { unsplashPhoto, imageView -> }
+    onLongClickPhoto = { unsplashPhoto, imageView -> }
 }
 ```
 
-See [UnsplashPhoto.kt](https://github.com/unsplash/unsplash-photopicker-android/blob/master/photopicker/src/main/java/com/unsplash/pickerandroid/photopicker/data/UnsplashPhoto.kt) for more details.
-
 ## Special Thanks
+
+Special Thanks to Unsplash for creating a beautiful free service with an easy to use API, seriously you guys are awesome.
+
+Special Thanks again to Unsplash for the initial code that this library is based off of,
+ they've very elegantly done the backend code used to perform network requests. This library would not be possible without them
+ and without them making it open source and licensing it with the MIT License, open and free for all as this library is as well.
+ Many thanks to them for all of this.
 
 ## License
 
+```
 MIT License
 
-Copyright (c) 2019 Unsplash Inc.
+Copyright (c) 2019 Bassam Helal
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
