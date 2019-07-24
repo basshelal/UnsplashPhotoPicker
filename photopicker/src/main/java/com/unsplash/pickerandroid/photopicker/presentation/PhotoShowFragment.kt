@@ -1,3 +1,5 @@
+@file:Suppress("RedundantVisibilityModifier", "MemberVisibilityCanBePrivate")
+
 package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.annotation.SuppressLint

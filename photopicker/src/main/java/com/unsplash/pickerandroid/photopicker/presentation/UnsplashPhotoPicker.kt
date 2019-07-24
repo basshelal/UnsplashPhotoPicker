@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER", "RedundantVisibilityModifier", "unused", "MemberVisibilityCanBePrivate")
 
 package com.unsplash.pickerandroid.photopicker.presentation
 
@@ -538,7 +538,7 @@ public enum class PhotoSize {
     }
 
     companion object {
-        fun valueOf(ordinal: Int) = PhotoSize.values()[ordinal]
+        fun valueOf(ordinal: Int) = values()[ordinal]
     }
 }
 
