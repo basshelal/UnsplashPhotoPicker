@@ -7,12 +7,12 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -26,6 +26,11 @@ import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.fragment_image_show.*
 import kotlinx.android.synthetic.main.photo_picker.*
 
+/**
+ * Used to show a single [UnsplashPhoto] on the screen.
+ *
+ * You should use [PhotoShowFragment.show] or [PhotoShowFragment.newInstance].
+ */
 public class PhotoShowFragment : Fragment() {
 
     private val onBackPressed = object : OnBackPressedCallback(true) {
@@ -142,7 +147,20 @@ public class PhotoShowFragment : Fragment() {
         private const val PHOTO_BY_STRING = "PHOTO_BY_STRING"
         private const val ON_STRING = "ON_STRING"
 
-        fun newInstance(
+        /**
+         * Creates a new [PhotoShowFragment] with the provided arguments.
+         *
+         * You should only use this instead of [show] if you want to show the [PhotoShowFragment]
+         * yourself, meaning perform the [androidx.fragment.app.FragmentTransaction] yourself.
+         * Otherwise you should use [show] instead.
+         *
+         * Shows the provided [photo] with the provided [photoSize].
+         *
+         * Use [photoByString] and [onString] to change the text displayed at the bottom
+         * used to credit the author and Unsplash, this is only used for translation and
+         * internationalization (i18n). Both strings must not contain leading or trailing spaces.
+         */
+        public fun newInstance(
             photo: UnsplashPhoto,
             photoSize: PhotoSize = PhotoSize.REGULAR,
             photoByString: String = "Photo by",
@@ -158,23 +176,32 @@ public class PhotoShowFragment : Fragment() {
             }
         }
 
-        fun show(
+        /**
+         * Shows the provided [photo] with the provided [photoSize] and returns the [PhotoShowFragment].
+         *
+         * You must provide the calling [AppCompatActivity] and [container] which will show this [PhotoShowFragment].
+         *
+         * This just performs the [androidx.fragment.app.FragmentTransaction] for you, if you'd like to do so yourself,
+         * you can use [newInstance].
+         *
+         * Use [photoByString] and [onString] to change the text displayed at the bottom
+         * used to credit the author and Unsplash, this is only used for translation and
+         * internationalization (i18n). Both strings must not contain leading or trailing spaces.
+         */
+        public fun show(
             activity: AppCompatActivity,
+            @IdRes container: Int,
             photo: UnsplashPhoto,
-            photoSize: PhotoSize = PhotoSize.REGULAR
+            photoSize: PhotoSize = PhotoSize.REGULAR,
+            photoByString: String = "Photo by",
+            onString: String = "on"
         ): PhotoShowFragment {
-            activity.search_cardView?.visibility = View.INVISIBLE
-            val fragment = newInstance(photo, photoSize)
+            val fragment = newInstance(photo, photoSize, photoByString, onString)
             activity.supportFragmentManager
                 .beginTransaction()
-                .add(R.id.photoPicker_constraintLayout, fragment, TAG)
-                .addToBackStack(TAG)
+                .add(container, fragment, TAG)
                 .commit()
             return fragment
         }
     }
-}
-
-fun log(message: String? = "${System.currentTimeMillis()}") {
-    Log.e("DEFAULT", message)
 }

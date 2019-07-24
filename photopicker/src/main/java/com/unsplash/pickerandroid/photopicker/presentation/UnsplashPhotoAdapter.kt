@@ -57,10 +57,9 @@ internal class UnsplashPhotoAdapter(
                 nameTextView.text = photo.user.name
 
                 // selected controls visibility
-                if (isMultipleSelection) {
-                    checkedImageView.visible = selected.keys.contains(adapterPosition)
-                    overlay.visible = selected.keys.contains(adapterPosition)
-                }
+
+                checkedImageView.visible = adapterPosition in selected.keys
+                overlay.visible = adapterPosition in selected.keys
 
                 // click listeners
                 itemView.setOnLongClickListener {
@@ -78,8 +77,11 @@ internal class UnsplashPhotoAdapter(
         val adapterPosition = currentList?.indexOf(photo) ?: -1
         if (!isMultipleSelection) {
             // single selection mode
-            selected.clear()
+            if (adapterPosition !in selected.keys) {
+                selected.clear()
+            }
             selected[adapterPosition] = photo
+            notifyDataSetChanged()
         } else {
             // multi selection mode
             if (adapterPosition in selected.keys) {
@@ -87,8 +89,8 @@ internal class UnsplashPhotoAdapter(
             } else {
                 selected[adapterPosition] = photo
             }
+            notifyItemChanged(adapterPosition)
         }
-        notifyItemChanged(adapterPosition)
     }
 
     internal fun getSelectedPhotos() = selected.values.toList()
@@ -99,7 +101,7 @@ internal class UnsplashPhotoAdapter(
     }
 
     companion object {
-        val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
+        internal val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
             override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
             override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
         }
