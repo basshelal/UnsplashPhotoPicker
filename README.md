@@ -1,4 +1,4 @@
-# Unsplash Photo Picker (Not yet finished!)
+# Unsplash Photo Picker
 
 ![Unsplash Photo Picker](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/pictures/Unsplash-Photo-Picker.png)
 
@@ -30,9 +30,9 @@ The original only launched an `Activity` for you which you had no control of, th
 
 ## Description
 
-This library allows you to add a fully functioning photo picker which uses free high-quality photos from [Unsplash.com](https://unsplash.com/).
+This library allows you to add a fully functioning photo picker which searches free high-quality photos from [Unsplash.com](https://unsplash.com/).
 
-You can select multiple (or one) image and you can show any image in fullscreen.
+You can select multiple (or one) images and you can show any image in fullscreen.
 
 This library will also take care of following ***most*** of the [Unsplash **Technical** API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) for you, however I am not responsible or liable if you do not follow them yourself.
 
@@ -61,7 +61,7 @@ Add the dependency in your **app module** `build.gradle` file:
 
 ```gradle
 dependencies {
-    implementation 'com.github.basshelal:UnsplashPhotoPicker:1.0.0'
+    implementation 'com.github.basshelal:UnsplashPhotoPicker:1.0.1'
 }
 ```
 
@@ -69,14 +69,14 @@ dependencies {
 
 ⚠️ **IMPORTANT!** ⚠️
 
-️Before you get started, you need to register as a developer on the Unsplash [Developer](https://unsplash.com/developers) portal.
+️Before you get started, you need to register as a developer on the [Unsplash Developer portal](https://unsplash.com/developers).
 Once registered, create a new app to get an **Access Key** and a **Secret Key**.
  
  Remember you must keep **both** keys secret.
 
 ### Initial Configuration
 
-You need to call [`UnsplashPhotoPickerConfig.init(...)`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/UnsplashPhotoPickerConfig.kt#L39)
+You need to call [`UnsplashPhotoPickerConfig.init(...)`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/UnsplashPhotoPickerConfig.kt)
 in your custom `Application` class's `onCreate()`, with the required arguments.
 
 ```kotlin
@@ -98,7 +98,7 @@ class App : Application() {
 
 ### Xml Attributes
 
-All xml attributes begin with `photoPicker_`.#
+All xml attributes begin with `photoPicker_`.
 
 For the full documentation, check out [Attributes.md](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/Attributes.md) 
 or the
@@ -166,7 +166,7 @@ This is done for you as you provide the Unsplash app name when you call `Unsplas
 
 4. *Your application’s Access Key and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
 
-This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key and ***DON'T*** check that file into Version Control by adding it to the `.gitignore` file. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up.
+This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key by add the file to the `.gitignore` file so it doesn't get checked into Version Control. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up.
 
 ## Special Thanks
 
