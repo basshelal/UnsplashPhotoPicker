@@ -13,7 +13,7 @@ Unsplash Photo Picker
 
 Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsplash/unsplash-photopicker-android), this library adds more flexibility, conveniences and customization than the original. 
 
-The original only provided you with an `Activity`, this provides you with a `View` you can use in your layouts.
+The original only launched an `Activity` for you which you had no control of, this provides you with a `View` you can use in your layouts.
 
 ## Contents
 
@@ -34,7 +34,8 @@ This library allows you to add a fully functioning photo picker which uses free 
 
 You can select multiple (or one) image and you can show any image in fullscreen.
 
-This library will also take care of following ***most*** of the Technical API guidelines for you, however I am not responsible or liable if you do not follow them yourself.
+This library will also take care of following ***most*** of the [Unsplash **Technical** API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) for you, however I am not responsible or liable if you do not follow them yourself.
+
 See the [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-guidelines) section for more details.
 
 ## Requirements
@@ -89,17 +90,18 @@ class App : Application() {
             accessKey = "your access key",
             secretKey = "your secret key",
             unsplashAppName = "your app's name on Unsplash",
-            isLoggingEnabled = false // optional to enable full HTTP logging
+            isLoggingEnabled = false // optional to enable full HTTP logging, defaults to false
         )
     }
 }
-
-
 ```
+
 ### Xml Attributes
 
-All xml attributes begin with `photoPicker_`.
-For the full documentation, check out the 
+All xml attributes begin with `photoPicker_`.#
+
+For the full documentation, check out [Attributes.md](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/Attributes.md) 
+or the
 [`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt) class itself.
 
 All public APIs in this library are well documented.
@@ -146,7 +148,7 @@ unsplashPhotoPicker.apply {
 You must follow the [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) 
 when using the Unsplash API in your application.
 
-This application takes care of Technical Guidelines 1-3 for you however, I am not responsible or liable if you do not follow them yourself.
+This application takes care of **Technical** Guidelines 1-3 for you however, I am not responsible or liable if you do not follow them yourself.
 
 Below are the Technical guidelines and how this library follows and implements them.
 
@@ -162,9 +164,9 @@ When you are done with your images you must call `UnsplashPhotoPicker.downloadPh
 
 This is done for you as you provide the Unsplash app name when you call `UnsplashPickerConfig.init(...)`. This must be the name of your app on the Unsplash developer portal.
 
-4. *Your application’s Access Key  and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
+4. *Your application’s Access Key and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
 
-This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key and ***DON'T*** check that file into Version Control by adding it to the `.gitignore` file. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up/
+This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key and ***DON'T*** check that file into Version Control by adding it to the `.gitignore` file. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up.
 
 ## Special Thanks
 
