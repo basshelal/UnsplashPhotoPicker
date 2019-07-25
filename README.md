@@ -2,6 +2,7 @@
 
 ![Unsplash Photo Picker for Android preview](https://github.com/unsplash/unsplash-photopicker-android/blob/dev/unsplash-photo-picker-android.png "Unsplash Photo Picker for Android")
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9a219205d7cd4c1a8f6a5cf4bf4df3d8)](https://app.codacy.com/app/basshelal/UnsplashPhotoPicker?utm_source=github.com&utm_medium=referral&utm_content=basshelal/UnsplashPhotoPicker&utm_campaign=Badge_Grade_Dashboard)
 [![License](https://img.shields.io/github/license/basshelal/UnsplashPhotoPicker.svg)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/LICENSE)
 
 [`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt)
