@@ -346,6 +346,7 @@ public class UnsplashPhotoPicker
         val onBackPressed = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
                 if (this@UnsplashPhotoPicker.search_editText?.text?.isNotBlank() == true) {
+                    clearSelectedPhotos()
                     this@UnsplashPhotoPicker.search_editText?.text = SpannableStringBuilder("")
                 }
             }
