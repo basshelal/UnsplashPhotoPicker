@@ -22,6 +22,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.transition.AutoTransition
 import com.github.basshelal.unsplashpicker.R
+import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -101,7 +102,10 @@ public class PhotoShowFragment : Fragment() {
                     Intent().apply {
                         action = Intent.ACTION_VIEW
                         addCategory(Intent.CATEGORY_BROWSABLE)
-                        data = Uri.parse("https://unsplash.com/@${photo.user.username}")
+                        data = Uri.parse(
+                            "https://unsplash.com/@${photo.user.username}" +
+                                    "?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
+                        )
                     })
             }
         }
@@ -119,7 +123,10 @@ public class PhotoShowFragment : Fragment() {
                     Intent().apply {
                         action = Intent.ACTION_VIEW
                         addCategory(Intent.CATEGORY_BROWSABLE)
-                        data = Uri.parse("https://unsplash.com/photos/${photo.id}")
+                        data = Uri.parse(
+                            "https://unsplash.com/photos/${photo.id}" +
+                                    "?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
+                        )
                     })
             }
         }

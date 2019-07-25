@@ -19,6 +19,7 @@ public object UnsplashPhotoPickerConfig {
     lateinit var application: Application
     lateinit var accessKey: String
     lateinit var secretKey: String
+    lateinit var unsplashAppName: String
     var isLoggingEnabled: Boolean = false
 
     /**
@@ -30,6 +31,10 @@ public object UnsplashPhotoPickerConfig {
      * Remember to keep both of these secret, I recommend to create a `Keys.kt` file with
      * `const val`s for both and do not check the file into Version Control.
      *
+     * The [unsplashAppName] is the name of your app in Unsplash, this is needed to be used to
+     * follow the API guidelines about referrals. Links to unsplash will contain the utm
+     * parameters "?utm_source=[unsplashAppName]&utm_medium=referral"
+     *
      * Set [isLoggingEnabled] to `true` if you would like to have all HTTP requests logged,
      * this defaults to false. Warning, this will flood your logcat!
      *
@@ -40,11 +45,13 @@ public object UnsplashPhotoPickerConfig {
         application: Application,
         accessKey: String,
         secretKey: String,
+        unsplashAppName: String,
         isLoggingEnabled: Boolean = false
     ): UnsplashPhotoPickerConfig {
         this.application = application
         this.accessKey = accessKey
         this.secretKey = secretKey
+        this.unsplashAppName = unsplashAppName
         this.isLoggingEnabled = isLoggingEnabled
         return this
     }

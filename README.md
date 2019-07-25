@@ -1,15 +1,21 @@
 # Unsplash Photo Picker (Not yet finished!)
 
-![Unsplash Photo Picker for Android preview](https://github.com/unsplash/unsplash-photopicker-android/blob/dev/unsplash-photo-picker-android.png "Unsplash Photo Picker for Android")
+![Unsplash Photo Picker](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/unsplash-photo-picker-android.png)
 
+[![JitPack](https://jitpack.io/v/basshelal/UnsplashPhotoPicker.svg)](https://jitpack.io/#basshelal/UnsplashPhotoPicker)
+![minAPI 21](https://img.shields.io/badge/minAPI-21-green.svg)
+![Kotlin 1.3+](https://img.shields.io/badge/Kotlin-1.3%2B-orange.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e5086f93fee54ad88887859e0b07af49)](https://www.codacy.com/app/basshelal/UnsplashPhotoPicker?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=basshelal/UnsplashPhotoPicker&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/github/license/basshelal/UnsplashPhotoPicker.svg)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/LICENSE)
 
-[`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt)
- is a modular and customizable Android View that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
+Unsplash Photo Picker
+ is a modular and customizable Android View that allows you to quickly search [Unsplash.com](https://unsplash.com/) for free high-quality photos with just a few lines of code.
 
-Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsplash/unsplash-photopicker-android).
+Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsplash/unsplash-photopicker-android), this library adds more flexibility, conveniences and customization than the original. 
 
-## Table of Contents
+The original only provided you with an `Activity`, this provides you with a `View` you can use in your layouts.
+
+## Contents
 
 * [Description](#description)
 * [Requirements](#requirements)
@@ -18,25 +24,18 @@ Based on [Unsplash Photo Picker for Android by Unsplash](https://github.com/unsp
   * [Initial Configuration](#initial-configuration)
   * [Xml Attributes](#xml-attributes)
   * [Click Listeners](#click-listeners)
+  * [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-guidelines)
 * [Special Thanks](#special-thanks)
 * [License](#license)
 
 ## Description
 
-This library allows you to add a fully functioning photo picker which uses free high-quality photos photos from [Unsplash.com](https://unsplash.com/).
+This library allows you to add a fully functioning photo picker which uses free high-quality photos from [Unsplash.com](https://unsplash.com/).
 
-You can allow for single or multiple selections and enlarge any photo to view in fullscreen.
+You can select multiple (or one) image and you can show any image in fullscreen.
 
-The difference between this library and the [one it is based off of](https://github.com/unsplash/unsplash-photopicker-android)
- is that this is more modular and allows for a greater level of customization, convenience and features.
- 
-This library provides you with a `View` you can use in your XML layouts with attributes that allow you to customize the view to your preference.
-The original library only allowed you to launch an Activity with the picker in it, whereas here you can use the picker (with the search bar) 
-as a `View` so it can be used as a child in `ViewGroup`s in `Fragment`s or `Activity`s.
-
-This library also provides you with easier ways to show and select photos and click listeners to listen to click and long click events on each photo.
-
-In a nutshell this library adds more features and customization to the original making it easier to use for the developer.
+This library will also take care of following ***most*** of the Technical API guidelines for you, however I am not responsible or liable if you do not follow them yourself.
+See the [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-guidelines) section for more details.
 
 ## Requirements
 
@@ -46,7 +45,7 @@ In a nutshell this library adds more features and customization to the original 
 
 ## Installation
 
-Step 1. Add the JitPack repository to your root build.gradle at the end of repositories:
+Add the JitPack repository to your **root** `build.gradle` at the end of repositories:
 
 ```gradle
 allprojects {
@@ -57,7 +56,7 @@ allprojects {
 }
 ```
 
-Step 2. Add the dependency in your app module `build.gradle` file:
+Add the dependency in your **app module** `build.gradle` file:
 
 ```gradle
 dependencies {
@@ -67,7 +66,7 @@ dependencies {
 
 ## Usage
 
-__**IMPORTANT!**__
+⚠️ **IMPORTANT!** ⚠️
 
 ️Before you get started, you need to register as a developer on the Unsplash [Developer](https://unsplash.com/developers) portal.
 Once registered, create a new app to get an **Access Key** and a **Secret Key**.
@@ -89,6 +88,7 @@ class App : Application() {
             application = this,
             accessKey = "your access key",
             secretKey = "your secret key",
+            unsplashAppName = "your app's name on Unsplash",
             isLoggingEnabled = false // optional to enable full HTTP logging
         )
     }
@@ -99,9 +99,14 @@ class App : Application() {
 ### Xml Attributes
 
 All xml attributes begin with `photoPicker_`.
+For the full documentation, check out the 
+[`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt) class itself.
+
+All public APIs in this library are well documented.
 
 | name | format | default value |
 |------|--------|---------------|
+|photoPicker_pageSize|integer|50|
 |photoPicker_spanCount|integer|2|
 |photoPicker_hasSearch|boolean |true|
 |photoPicker_persistentSearch|boolean|false|
@@ -118,6 +123,7 @@ All xml attributes begin with `photoPicker_`.
 
 PhotoSize enum:
 thumb, small, medium, regular, large, full, raw
+
 See the [`PhotoSize enum class`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt#L549)
 
 ### Click Listeners
@@ -128,10 +134,37 @@ and the clicked `ImageView` as the second parameter.
 
 ```kotlin
 unsplashPhotoPicker.apply {
-    onClickPhoto = { unsplashPhoto, imageView -> }
-    onLongClickPhoto = { unsplashPhoto, imageView -> }
+    onClickPhoto = { unsplashPhoto, imageView -> this.showPhoto(unsplashPhoto) }
+    onLongClickPhoto = { unsplashPhoto, imageView -> this.selectPhoto(unsplashPhoto) }
 }
 ```
+
+### Abiding by the Unsplash API Guidelines
+
+⚠️ **IMPORTANT!** ⚠️
+
+You must follow the [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) 
+when using the Unsplash API in your application.
+
+This application takes care of Technical Guidelines 1-3 for you however, I am not responsible or liable if you do not follow them yourself.
+
+Below are the Technical guidelines and how this library follows and implements them.
+
+1. *All API uses must use the hotlinked image URLs returned by the API under the `photo.urls`  properties. This applies to all uses of the image and not just search results.*
+
+This is automatically done for you courtesy of the original library, do not worry about this.
+
+2. *When your application performs something similar to a download (like when a user chooses the image to include in a blog post, set as a header, etc.), you must send a request to the download endpoint returned under the `photo.links.download_location` property.*
+
+When you are done with your images you must call `UnsplashPhotoPicker.downloadPhotos` to send the download request.
+
+3. *When displaying a photo from Unsplash, your application must attribute Unsplash, the Unsplash photographer, and contain a link back to their Unsplash profile. All links back to Unsplash should use utm parameters in the `?utm_source=your_app_name&utm_medium=referral`.*
+
+This is done for you as you provide the Unsplash app name when you call `UnsplashPickerConfig.init(...)`. This must be the name of your app on the Unsplash developer portal.
+
+4. *Your application’s Access Key  and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
+
+This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key and ***DON'T*** check that file into Version Control by adding it to the `.gitignore` file. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up/
 
 ## Special Thanks
 
