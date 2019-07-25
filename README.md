@@ -1,6 +1,6 @@
 # Unsplash Photo Picker (Not yet finished!)
 
-![Unsplash Photo Picker](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/unsplash-photo-picker-android.png)
+![Unsplash Photo Picker](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/pictures/Unsplash-Photo-Picker.png)
 
 [![JitPack](https://jitpack.io/v/basshelal/UnsplashPhotoPicker.svg)](https://jitpack.io/#basshelal/UnsplashPhotoPicker)
 ![minAPI 21](https://img.shields.io/badge/minAPI-21-green.svg)
