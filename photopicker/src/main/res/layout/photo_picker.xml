@@ -53,7 +53,6 @@
                     android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:lines="1"
-                    android:maxLines="1"
                     android:imeOptions="actionDone"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                     android:textSize="22sp"
