@@ -16,15 +16,19 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.animation.LinearInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
+import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -136,6 +140,7 @@ public class UnsplashPhotoPicker
         set(value) {
             field = value
             searchCardView?.isVisible = value
+            showPadding()
         }
 
     /**
@@ -156,7 +161,7 @@ public class UnsplashPhotoPicker
         attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_isMultipleSelection, false)
         set(value) {
             field = value
-            resetAdapter()
+            adapter.isMultipleSelection = value
         }
 
     /**
@@ -170,7 +175,7 @@ public class UnsplashPhotoPicker
         attrs.getDrawable(R.styleable.UnsplashPhotoPicker_photoPicker_errorDrawable)
         set(value) {
             field = value
-            resetAdapter()
+            adapter.errorDrawable = value
         }
 
     /**
@@ -184,7 +189,7 @@ public class UnsplashPhotoPicker
         attrs.getDrawable(R.styleable.UnsplashPhotoPicker_photoPicker_placeHolderDrawable)
         set(value) {
             field = value
-            resetAdapter()
+            adapter.placeHolderDrawable = value
         }
 
     /**
@@ -198,7 +203,7 @@ public class UnsplashPhotoPicker
         PhotoSize.valueOf(attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_pickerPhotoSize, 1))
         set(value) {
             field = value
-            resetAdapter()
+            adapter.photoSize = value
         }
 
     /**
@@ -328,6 +333,9 @@ public class UnsplashPhotoPicker
 
     //endregion Public API
 
+    // TODO: 26-Jul-19 3 reasons for RecyclerView being empty
+    //  no results, no internet and generic error, we should allow developer to do something with them
+
     init {
         // The context must be an AppCompatActivity because we use Fragments to show and select photos
         require(context is AppCompatActivity) {
@@ -389,7 +397,6 @@ public class UnsplashPhotoPicker
         // The scroll listener that deals with the sliding search bar
         unsplashPhotoPickerRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-            var atTop = true
             var scrollingDown = false
             var scrollingUp = false
 
@@ -399,10 +406,6 @@ public class UnsplashPhotoPicker
                     if (dy > 0 && !scrollingUp) {
                         if (!persistentSearch) {
                             searchCardView?.slideUp()
-                        }
-                        if (atTop) {
-                            recyclerView.slideUp(200, 0F)
-                            atTop = false
                         }
                         scrollingUp = true
                         scrollingDown = false
@@ -420,23 +423,13 @@ public class UnsplashPhotoPicker
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (hasSearch) {
-                    val into = IntArray(spanCount) { -1 }
-                    (recyclerView.layoutManager as? StaggeredGridLayoutManager)
-                        ?.findFirstCompletelyVisibleItemPositions(into)
-                    if (0 in into) {
-                        recyclerView.slideDown(
-                            150,
-                            searchCardView!!.height.toFloat() + searchCardView!!.verticalMargin.toFloat()
-                        )
-                        atTop = true
-                    }
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                         searchEditText?.hideKeyboard()
                     }
                 }
             }
         })
-
+        showPadding()
     }
 
     //region Public API functions
@@ -469,11 +462,9 @@ public class UnsplashPhotoPicker
         onString: String = this.onString
     ): PhotoShowFragment {
         searchEditText?.hideKeyboard()
-        val fragment = PhotoShowFragment.show(
-            activity, R.id.photoPicker_constraintLayout, photo, photoSize, photoByString, onString
+        return PhotoShowFragment.show(
+            activity, photo, android.R.id.content, photoSize, photoByString, onString
         )
-        searchCardView?.visibility = View.INVISIBLE
-        return fragment
     }
 
     /**
@@ -490,19 +481,45 @@ public class UnsplashPhotoPicker
     public fun downloadPhotos(unsplashPhotos: List<UnsplashPhoto>) =
         unsplashPhotos.onEach { repository.trackDownload(it.links.download_location) }
 
+    public inline fun showPadding() {
+        postDelayed(100) {
+            val padding = if (hasSearch)
+                ((searchCardView?.height ?: 0) + (searchCardView?.verticalMargin ?: 0))
+            else convertDpToPx(4, context)
+            unsplashPhotoPickerRecyclerView?.updatePadding(top = padding)
+        }
+    }
+
+    public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Any) = this.apply { apply() }
+
+    companion object {
+
+        public inline operator fun invoke(
+            context: Context,
+            apply: UnsplashPhotoPicker.() -> Unit = {}
+        ) =
+            get(context, apply)
+
+        public inline fun get(context: Context, apply: UnsplashPhotoPicker.() -> Unit = {}): UnsplashPhotoPicker {
+            return UnsplashPhotoPicker(context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    MATCH_PARENT, MATCH_PARENT
+                )
+                this.apply()
+            }
+        }
+
+        public inline fun show(
+            activity: AppCompatActivity,
+            @IdRes container: Int = android.R.id.content,
+            noinline apply: UnsplashPhotoPicker.() -> Unit = {}
+        ): PhotoPickerFragment =
+            PhotoPickerFragment.show(activity, container, apply)
+    }
+
     //endregion Public API functions
 
     //region Private functions
-
-    private inline fun resetAdapter() {
-        adapter = UnsplashPhotoAdapter(
-            isMultipleSelection,
-            onPhotoSelectedListener,
-            pickerPhotoSize,
-            placeHolderDrawable,
-            errorDrawable
-        )
-    }
 
     @SuppressLint("CheckResult")
     private inline fun EditText.bindSearch() {
@@ -517,12 +534,6 @@ public class UnsplashPhotoPicker
             }.subscribe {
                 adapter.submitList(it) {
                     unsplashPhotoPickerRecyclerView?.smoothScrollToPosition(0)
-                }
-                if (hasSearch) {
-                    unsplashPhotoPickerRecyclerView?.slideDown(
-                        0,
-                        searchCardView!!.height.toFloat() + searchCardView!!.verticalMargin.toFloat()
-                    )
                 }
                 this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
             }
@@ -572,7 +583,8 @@ public enum class PhotoSize {
 
 //region Private Extensions and Utilities
 
-private inline val View.verticalMargin: Int
+@PublishedApi
+internal inline val View.verticalMargin: Int
     get() = (layoutParams as ViewGroup.MarginLayoutParams).let { it.topMargin + it.bottomMargin }
 
 @Suppress("NOTHING_TO_INLINE")

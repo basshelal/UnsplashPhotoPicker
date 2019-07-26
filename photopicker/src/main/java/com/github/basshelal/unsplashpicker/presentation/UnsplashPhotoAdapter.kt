@@ -21,12 +21,38 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This deals with either a single or multiple selection list.
  */
 internal class UnsplashPhotoAdapter(
-    private val isMultipleSelection: Boolean = false,
-    private val onPhotoSelectedListener: OnPhotoSelectedListener? = null,
-    private val photoSize: PhotoSize = PhotoSize.SMALL,
-    private val placeHolderDrawable: Drawable? = null,
-    private val errorDrawable: Drawable? = null
+    isMultipleSelection: Boolean = false,
+    onPhotoSelectedListener: OnPhotoSelectedListener? = null,
+    photoSize: PhotoSize = PhotoSize.SMALL,
+    placeHolderDrawable: Drawable? = null,
+    errorDrawable: Drawable? = null
 ) : PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
+
+    internal var isMultipleSelection: Boolean = isMultipleSelection
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    internal var onPhotoSelectedListener: OnPhotoSelectedListener? = onPhotoSelectedListener
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    internal var photoSize: PhotoSize = photoSize
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    internal var placeHolderDrawable: Drawable? = placeHolderDrawable
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    internal var errorDrawable: Drawable? = errorDrawable
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     // Key is index, Value is UnsplashPhoto
     private val selected = LinkedHashMap<Int, UnsplashPhoto>()
@@ -77,10 +103,12 @@ internal class UnsplashPhotoAdapter(
         val adapterPosition = currentList?.indexOf(photo) ?: -1
         if (!isMultipleSelection) {
             // single selection mode
-            if (adapterPosition !in selected.keys) {
+            if (adapterPosition in selected.keys) {
                 selected.clear()
+            } else {
+                selected.clear()
+                selected[adapterPosition] = photo
             }
-            selected[adapterPosition] = photo
             notifyDataSetChanged()
         } else {
             // multi selection mode

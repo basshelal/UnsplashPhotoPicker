@@ -23,7 +23,14 @@ class MainActivity : AppCompatActivity() {
 
     fun View.shortSnackbar(text: String) {
         Snackbar.make(this, text, Snackbar.LENGTH_SHORT).apply {
-            setAction("Dismiss", { dismiss() })
+            setAction("OK", { dismiss() })
         }.show()
     }
+
+    fun View.longSnackbar(text: String) {
+        Snackbar.make(this, text, Snackbar.LENGTH_LONG).apply {
+            setAction("OK", { dismiss() })
+        }.show()
+    }
+
 }

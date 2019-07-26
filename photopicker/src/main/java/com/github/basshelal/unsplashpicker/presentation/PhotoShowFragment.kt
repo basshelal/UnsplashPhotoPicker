@@ -2,7 +2,6 @@
 
 package com.github.basshelal.unsplashpicker.presentation
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -27,7 +26,6 @@ import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_image_show.*
-import kotlinx.android.synthetic.main.photo_picker.*
 
 /**
  * Used to show a single [UnsplashPhoto] on the screen.
@@ -56,16 +54,13 @@ public class PhotoShowFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_image_show, container, false)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        arguments!!.getParcelable<UnsplashPhoto>(PHOTO)!!.also { photo ->
-            arguments!!.getString(PHOTO_SIZE)!!.also { size ->
-
+        arguments?.getParcelable<UnsplashPhoto>(PHOTO)?.also { photo ->
+            arguments?.getString(PHOTO_SIZE)?.also { size ->
                 setUpPhotoView(photo, PhotoSize.valueOf(size))
                 setUpTextViews(photo)
-
             }
         }
     }
@@ -132,11 +127,6 @@ public class PhotoShowFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        activity?.search_cardView?.visibility = View.VISIBLE
-    }
-
     private inline fun finish() {
         onBackPressed.isEnabled = false
         (activity as? AppCompatActivity?)?.supportFragmentManager?.beginTransaction()
@@ -183,7 +173,7 @@ public class PhotoShowFragment : Fragment() {
         /**
          * Shows the provided [photo] with the provided [photoSize] and returns the [PhotoShowFragment].
          *
-         * You must provide the calling [AppCompatActivity] and [container] which will show this [PhotoShowFragment].
+         * You must provide the calling [AppCompatActivity] which will show this [PhotoShowFragment].
          *
          * This just performs the [androidx.fragment.app.FragmentTransaction] for you, if you'd like to do so yourself,
          * you can use [newInstance].
@@ -194,8 +184,8 @@ public class PhotoShowFragment : Fragment() {
          */
         public fun show(
             activity: AppCompatActivity,
-            @IdRes container: Int,
             photo: UnsplashPhoto,
+            @IdRes container: Int = android.R.id.content,
             photoSize: PhotoSize = PhotoSize.REGULAR,
             photoByString: String = "Photo by",
             onString: String = "on"
