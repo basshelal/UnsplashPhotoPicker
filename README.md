@@ -5,6 +5,7 @@
 [![JitPack](https://jitpack.io/v/basshelal/UnsplashPhotoPicker.svg)](https://jitpack.io/#basshelal/UnsplashPhotoPicker)
 ![minAPI 21](https://img.shields.io/badge/minAPI-21-green.svg)
 ![Kotlin 1.3+](https://img.shields.io/badge/Kotlin-1.3%2B-orange.svg)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Unsplash%20Photo%20Picker-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/7793)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e5086f93fee54ad88887859e0b07af49)](https://www.codacy.com/app/basshelal/UnsplashPhotoPicker?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=basshelal/UnsplashPhotoPicker&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/github/license/basshelal/UnsplashPhotoPicker.svg)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/LICENSE)
 
@@ -17,16 +18,16 @@ The original only launched an `Activity` for you which you had no control of, th
 
 ## Contents
 
-* [Description](#description)
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Usage](#usage)
-  * [Initial Configuration](#initial-configuration)
-  * [Xml Attributes](#xml-attributes)
-  * [Click Listeners](#click-listeners)
-  * [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-guidelines)
-* [Special Thanks](#special-thanks)
-* [License](#license)
+*   [Description](#description)
+*   [Requirements](#requirements)
+*   [Installation](#installation)
+*   [Usage](#usage)
+    *   [Initial Configuration](#initial-configuration)
+    *   [Xml Attributes](#xml-attributes)
+    *   [Click Listeners](#click-listeners)
+    *   [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-guidelines)
+*   [Special Thanks](#special-thanks)
+*   [License](#license)
 
 ## Description
 
@@ -40,9 +41,9 @@ See the [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-gu
 
 ## Requirements
 
-* Min API 21 and AndroidX
-* Kotlin 1.3+
-* [Unsplash API Access Key and Secret Key](https://unsplash.com/documentation#registering-your-application)
+*   Min API 21 and AndroidX
+*   Kotlin 1.3+
+*   [Unsplash API Access Key and Secret Key](https://unsplash.com/documentation#registering-your-application)
 
 ## Installation
 
@@ -100,7 +101,7 @@ class App : Application() {
 
 All xml attributes begin with `photoPicker_`.
 
-For the full documentation, check out [Attributes.md](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/Attributes.md) 
+For the full documentation, check out [attributes.md](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/attributes.md) 
 or the
 [`UnsplashPhotoPicker`](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/photopicker/src/main/java/com/github/basshelal/unsplashpicker/presentation/UnsplashPhotoPicker.kt) class itself.
 
@@ -152,19 +153,19 @@ This application takes care of **Technical** Guidelines 1-3 for you however, I a
 
 Below are the Technical guidelines and how this library follows and implements them.
 
-1. *All API uses must use the hotlinked image URLs returned by the API under the `photo.urls`  properties. This applies to all uses of the image and not just search results.*
+1.   *All API uses must use the hotlinked image URLs returned by the API under the `photo.urls`  properties. This applies to all uses of the image and not just search results.*
 
 This is automatically done for you courtesy of the original library, do not worry about this.
 
-2. *When your application performs something similar to a download (like when a user chooses the image to include in a blog post, set as a header, etc.), you must send a request to the download endpoint returned under the `photo.links.download_location` property.*
+2.   *When your application performs something similar to a download (like when a user chooses the image to include in a blog post, set as a header, etc.), you must send a request to the download endpoint returned under the `photo.links.download_location` property.*
 
 When you are done with your images you must call `UnsplashPhotoPicker.downloadPhotos` to send the download request.
 
-3. *When displaying a photo from Unsplash, your application must attribute Unsplash, the Unsplash photographer, and contain a link back to their Unsplash profile. All links back to Unsplash should use utm parameters in the `?utm_source=your_app_name&utm_medium=referral`.*
+3.   *When displaying a photo from Unsplash, your application must attribute Unsplash, the Unsplash photographer, and contain a link back to their Unsplash profile. All links back to Unsplash should use utm parameters in the `?utm_source=your_app_name&utm_medium=referral`.*
 
 This is done for you as you provide the Unsplash app name when you call `UnsplashPickerConfig.init(...)`. This must be the name of your app on the Unsplash developer portal.
 
-4. *Your application’s Access Key and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
+4.   *Your application’s Access Key and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
 
 This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key by add the file to the `.gitignore` file so it doesn't get checked into Version Control. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up.
 

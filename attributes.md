@@ -1,19 +1,19 @@
 # Attributes
 
-* [Page Size](#page-size)
-* [Span Count](#span-count)
-* [Has Search](#has-search)
-* [Persistent Search](#persistent-search#)
-* [Is Multiple Selection](#is-multiple-selection)
-* [Error Drawable](#error-drawable)
-* [Place Holder Drawable](#place-holder-drawable)
-* [Picker Photo Size](#picker-photo-size)
-* [Show Photo Size](#show-photo-size)
-* [Search Hint](#search-hint)
-* [Photo By String](#photo-by-string)
-* [On String](#on-string)
-* [Click Opens Photo](#click-opens-photo)
-* [Long Click Selects Photo](#long-click-selects-photo)
+*   [Page Size](#page-size)
+*   [Span Count](#span-count)
+*   [Has Search](#has-search)
+*   [Persistent Search](#persistent-search#)
+*   [Is Multiple Selection](#is-multiple-selection)
+*   [Error Drawable](#error-drawable)
+*   [Place Holder Drawable](#place-holder-drawable)
+*   [Picker Photo Size](#picker-photo-size)
+*   [Show Photo Size](#show-photo-size)
+*   [Search Hint](#search-hint)
+*   [Photo By String](#photo-by-string)
+*   [On String](#on-string)
+*   [Click Opens Photo](#click-opens-photo)
+*   [Long Click Selects Photo](#long-click-selects-photo)
 
 ## Page Size
 
