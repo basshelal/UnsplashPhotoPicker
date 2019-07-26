@@ -3,6 +3,9 @@ package com.github.basshelal.unsplashpicker.data
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
+/**
+ * See the [official Unsplash API Users section](https://unsplash.com/documentation#users)
+ */
 @Parcelize
 data class UnsplashUser(
     val id: String,

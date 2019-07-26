@@ -38,6 +38,7 @@ import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.github.basshelal.unsplashpicker.data.UnsplashUrls
 import com.github.basshelal.unsplashpicker.domain.Repository
 import com.github.basshelal.unsplashpicker.presentation.PhotoSize.REGULAR
+import com.github.basshelal.unsplashpicker.presentation.UnsplashPhotoPicker.Companion.downloadPhotos
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -467,20 +468,6 @@ public class UnsplashPhotoPicker
         )
     }
 
-    /**
-     * To abide by the
-     * [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines),
-     * you must request a download to the [unsplashPhotos]s when you use them in your
-     * application. This is usually when the user has picked the image(s) they want to use and you
-     * will use them in your application.
-     *
-     * You **MUST** call this function when you will use the images to abide by the guidelines.
-     *
-     * @return the [unsplashPhotos] after they have sent a download request
-     */
-    public fun downloadPhotos(unsplashPhotos: List<UnsplashPhoto>) =
-        unsplashPhotos.onEach { repository.trackDownload(it.links.download_location) }
-
     public inline fun showPadding() {
         postDelayed(100) {
             val padding = if (hasSearch)
@@ -515,6 +502,20 @@ public class UnsplashPhotoPicker
             noinline apply: UnsplashPhotoPicker.() -> Unit = {}
         ): PhotoPickerFragment =
             PhotoPickerFragment.show(activity, container, apply)
+
+        /**
+         * To abide by the
+         * [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines),
+         * you must request a download to the [unsplashPhotos]s when you use them in your
+         * application. This is usually when the user has picked the image(s) they want to use and you
+         * will use them in your application.
+         *
+         * You **MUST** call this function when you will use the images to abide by the guidelines.
+         *
+         * @return the [unsplashPhotos] after they have sent a download request
+         */
+        public fun downloadPhotos(unsplashPhotos: List<UnsplashPhoto>) =
+            unsplashPhotos.onEach { Injector.repository.trackDownload(it.links.download_location) }
     }
 
     //endregion Public API functions
