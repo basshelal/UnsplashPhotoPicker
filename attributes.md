@@ -3,7 +3,7 @@
 *   [Page Size](#page-size)
 *   [Span Count](#span-count)
 *   [Has Search](#has-search)
-*   [Persistent Search](#persistent-search#)
+*   [Persistent Search](#persistent-search)
 *   [Is Multiple Selection](#is-multiple-selection)
 *   [Error Drawable](#error-drawable)
 *   [Place Holder Drawable](#place-holder-drawable)
