@@ -12,8 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.transition.AutoTransition
 import com.github.basshelal.unsplashpicker.R
+import com.github.basshelal.unsplashpicker.presentation.PhotoShowFragment.Companion.show
 import kotlinx.android.synthetic.main.fragment_picker_show.*
 
+/**
+ * Used to show an [UnsplashPhotoPicker] on the screen quickly without having to do the layout yourself.
+ *
+ * The [apply] parameter will be applied to the [UnsplashPhotoPicker].
+ *
+ * You should use [PhotoPickerFragment.show] to quickly show an [UnsplashPhotoPicker] to the screen.
+ */
 class PhotoPickerFragment
 @JvmOverloads constructor(private val apply: UnsplashPhotoPicker.() -> Unit = {}) : Fragment() {
 
@@ -41,7 +49,7 @@ class PhotoPickerFragment
         super.onActivityCreated(savedInstanceState)
 
         photoPicker.apply {
-            apply()
+            this.apply()
         }
     }
 
@@ -55,10 +63,26 @@ class PhotoPickerFragment
     companion object {
         const val TAG = "UnsplashPhotoPickerFragment"
 
+        /**
+         * Returns a new instance of [PhotoPickerFragment] which will show an [UnsplashPhotoPicker]
+         * with the passed in [apply] block applied to it.
+         *
+         * You should only use this instead of [show] if you want to show the [PhotoPickerFragment]
+         * yourself, meaning perform the [androidx.fragment.app.FragmentTransaction] yourself.
+         * Otherwise you should use [show] instead.
+         */
         public fun newInstance(apply: UnsplashPhotoPicker.() -> Unit): PhotoPickerFragment {
             return PhotoPickerFragment(apply)
         }
 
+        /**
+         * Shows an [UnsplashPhotoPicker] in a [PhotoPickerFragment] which will have the passed in
+         * [apply] block applied to it and returns the [PhotoPickerFragment].
+         *
+         * The [container] is the [IdRes] of the container View, which will default to the main content
+         *
+         * This is just a wrapper around [PhotoPickerFragment.show]
+         */
         public fun show(
             activity: AppCompatActivity,
             @IdRes container: Int = android.R.id.content,

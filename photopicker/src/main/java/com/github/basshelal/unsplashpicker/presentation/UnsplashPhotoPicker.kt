@@ -141,7 +141,7 @@ public class UnsplashPhotoPicker
         set(value) {
             field = value
             searchCardView?.isVisible = value
-            showPadding()
+            updatePadding()
         }
 
     /**
@@ -334,9 +334,6 @@ public class UnsplashPhotoPicker
 
     //endregion Public API
 
-    // TODO: 26-Jul-19 3 reasons for RecyclerView being empty
-    //  no results, no internet and generic error, we should allow developer to do something with them
-
     init {
         // The context must be an AppCompatActivity because we use Fragments to show and select photos
         require(context is AppCompatActivity) {
@@ -430,7 +427,7 @@ public class UnsplashPhotoPicker
                 }
             }
         })
-        showPadding()
+        updatePadding()
     }
 
     //region Public API functions
@@ -468,25 +465,63 @@ public class UnsplashPhotoPicker
         )
     }
 
-    public inline fun showPadding() {
-        postDelayed(100) {
-            val padding = if (hasSearch)
-                ((searchCardView?.height ?: 0) + (searchCardView?.verticalMargin ?: 0))
-            else convertDpToPx(4, context)
-            unsplashPhotoPickerRecyclerView?.updatePadding(top = padding)
-        }
-    }
-
+    /**
+     * For convenience and conciseness, this is just a wrapper around [kotlin.apply].
+     *
+     * This allows you to create code like this:
+     * ```
+     *      myUnsplashPhotoPicker {
+     *          hasSearch = true
+     *          persistentSearch = true
+     *          longClickSelectsPhoto = false
+     *          clickOpensPhoto = false
+     *          onClick = { photo,_ -> selectPhoto(photo) }
+     *      }
+     * ```
+     */
     public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Any) = this.apply { apply() }
 
     companion object {
 
+        /**
+         * For convenience and conciseness this is just a wrapper around [UnsplashPhotoPicker.get]
+         *
+         * This allows you to create code like this in an [AppCompatActivity]:
+         * ```
+         *      val picker = UnsplashPhotoPicker(context = this) {
+         *          hasSearch = true
+         *          persistentSearch = true
+         *          longClickSelectsPhoto = false
+         *          clickOpensPhoto = false
+         *          onClick = { photo,_ -> selectPhoto(photo) }
+         *      }
+         * ```
+         */
         public inline operator fun invoke(
             context: Context,
             apply: UnsplashPhotoPicker.() -> Unit = {}
         ) =
             get(context, apply)
 
+        /**
+         * Returns an [UnsplashPhotoPicker] that with the passed in [apply] block applied to it.
+         *
+         * This returns an [UnsplashPhotoPicker] which will have [MATCH_PARENT] height and width.
+         *
+         * This is useful if you would like to add the [UnsplashPhotoPicker] yourself in code such as follows:
+         *
+         * ```
+         *      linearLayout.addView(
+         *          UnsplashPhotoPicker.get(context) {
+         *              hasSearch = true
+         *              persistentSearch = true
+         *              longClickSelectsPhoto = false
+         *              clickOpensPhoto = false
+         *              onClick = { photo,_ -> selectPhoto(photo) }
+         *          }
+         *      )
+         * ```
+         */
         public inline fun get(context: Context, apply: UnsplashPhotoPicker.() -> Unit = {}): UnsplashPhotoPicker {
             return UnsplashPhotoPicker(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
@@ -496,6 +531,12 @@ public class UnsplashPhotoPicker
             }
         }
 
+        /**
+         * Shows an [UnsplashPhotoPicker] in a [PhotoPickerFragment] which will have the passed in
+         * [apply] block applied to it and returns the [PhotoPickerFragment]
+         *
+         * This is just a wrapper around [PhotoPickerFragment.show]
+         */
         public inline fun show(
             activity: AppCompatActivity,
             @IdRes container: Int = android.R.id.content,
@@ -545,6 +586,15 @@ public class UnsplashPhotoPicker
             this.clearFocus()
             (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(windowToken, 0)
+        }
+    }
+
+    private inline fun updatePadding() {
+        postDelayed(100) {
+            val padding = if (hasSearch)
+                ((searchCardView?.height ?: 0) + (searchCardView?.verticalMargin ?: 0))
+            else convertDpToPx(4, context)
+            unsplashPhotoPickerRecyclerView?.updatePadding(top = padding)
         }
     }
 
