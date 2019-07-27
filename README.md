@@ -1,13 +1,13 @@
 # Unsplash Photo Picker
 
-![Unsplash Photo Picker](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/pictures/Unsplash-Photo-Picker.png)
-
 [![JitPack](https://jitpack.io/v/basshelal/UnsplashPhotoPicker.svg)](https://jitpack.io/#basshelal/UnsplashPhotoPicker)
 ![minAPI 21](https://img.shields.io/badge/minAPI-21-green.svg)
 ![Kotlin 1.3+](https://img.shields.io/badge/Kotlin-1.3%2B-orange.svg)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Unsplash%20Photo%20Picker-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/7793)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e5086f93fee54ad88887859e0b07af49)](https://www.codacy.com/app/basshelal/UnsplashPhotoPicker?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=basshelal/UnsplashPhotoPicker&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/github/license/basshelal/UnsplashPhotoPicker.svg)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/LICENSE)
+
+![Unsplash Photo Picker](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/pictures/Unsplash-Photo-Picker.png)
 
 Unsplash Photo Picker
  is a modular and customizable Android View that allows you to quickly search [Unsplash.com](https://unsplash.com/) for free high-quality photos with just a few lines of code.
