@@ -479,7 +479,7 @@ public class UnsplashPhotoPicker
      *      }
      * ```
      */
-    public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Any) = this.apply { apply() }
+    public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Unit) = this.apply { apply() }
 
     companion object {
 
