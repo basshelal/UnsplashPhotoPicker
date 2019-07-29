@@ -64,7 +64,7 @@ Add the dependency in your **app module** `build.gradle` file:
 
 ```gradle
 dependencies {
-    implementation 'com.github.basshelal:UnsplashPhotoPicker:1.1.0'
+    implementation 'com.github.basshelal:UnsplashPhotoPicker:1.1.2'
 }
 ```
 
