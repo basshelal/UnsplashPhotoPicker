@@ -60,6 +60,12 @@ class PhotoPickerFragment
             ?.commit()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        onBackPressed.isEnabled = false
+    }
+
     companion object {
         const val TAG = "UnsplashPhotoPickerFragment"
 

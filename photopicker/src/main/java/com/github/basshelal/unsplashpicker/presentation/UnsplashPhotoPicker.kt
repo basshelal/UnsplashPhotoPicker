@@ -92,6 +92,16 @@ public class UnsplashPhotoPicker
         }
     }
 
+    // When the user has searched something, a back press will clear the selection
+    val onBackPressed = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            if (this@UnsplashPhotoPicker.search_editText?.text?.isNotBlank() == true) {
+                clearSelectedPhotos()
+                this@UnsplashPhotoPicker.search_editText?.text = SpannableStringBuilder("")
+            }
+        }
+    }
+
     //endregion Privates
 
     //region Public API
@@ -348,15 +358,6 @@ public class UnsplashPhotoPicker
         searchCardView?.isVisible = hasSearch
         searchEditText?.hint = searchHint
 
-        // When the user has searched something, a back press will clear the selection
-        val onBackPressed = object : OnBackPressedCallback(false) {
-            override fun handleOnBackPressed() {
-                if (this@UnsplashPhotoPicker.search_editText?.text?.isNotBlank() == true) {
-                    clearSelectedPhotos()
-                    this@UnsplashPhotoPicker.search_editText?.text = SpannableStringBuilder("")
-                }
-            }
-        }
         activity.onBackPressedDispatcher.addCallback(onBackPressed)
 
         adapter = UnsplashPhotoAdapter(
@@ -596,6 +597,14 @@ public class UnsplashPhotoPicker
             else convertDpToPx(4, context)
             unsplashPhotoPickerRecyclerView?.updatePadding(top = padding)
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+
+        // If the caller destroyed this View when the search bar was full
+        // we must disable the onBackPressed to avoid "empty" back presses
+        onBackPressed.isEnabled = false
     }
 
     //endregion Private functions

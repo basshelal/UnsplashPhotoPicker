@@ -134,6 +134,12 @@ public class PhotoShowFragment : Fragment() {
             ?.commit()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        onBackPressed.isEnabled = false
+    }
+
     companion object {
         const val TAG = "UnsplashPhotoPickerPhotoShowFragment"
         private const val PHOTO = "PHOTO"
