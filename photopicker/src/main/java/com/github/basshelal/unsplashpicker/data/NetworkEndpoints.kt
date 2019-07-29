@@ -12,7 +12,7 @@ import retrofit2.http.Url
  */
 internal interface NetworkEndpoints {
 
-    @GET("collections/317099/photos")
+    @GET("/photos")
     fun loadPhotos(
         @Query("client_id") clientId: String,
         @Query("page") page: Int,
