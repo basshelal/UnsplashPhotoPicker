@@ -371,6 +371,7 @@ public class UnsplashPhotoPicker
         unsplashPhotoPickerRecyclerView?.apply {
             setHasFixedSize(true)
             itemAnimator = null
+            overScrollMode = View.OVER_SCROLL_NEVER
             layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             adapter = this@UnsplashPhotoPicker.adapter
         }
