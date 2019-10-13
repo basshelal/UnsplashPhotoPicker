@@ -17,15 +17,14 @@ internal object Injector {
 
     val repository: Repository = Repository(createNetworkEndpoints())
 
-    private fun createHeaderInterceptor(): Interceptor {
-        return Interceptor { chain ->
+    private fun createHeaderInterceptor() =
+        Interceptor { chain ->
             val newRequest = chain.request().newBuilder()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept-Version", "v1")
                 .build()
             chain.proceed(newRequest)
         }
-    }
 
     private fun createLoggingInterceptor() =
         HttpLoggingInterceptor().also {
