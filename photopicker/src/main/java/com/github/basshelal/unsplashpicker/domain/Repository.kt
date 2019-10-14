@@ -46,11 +46,11 @@ internal class Repository constructor(private val networkEndpoints: NetworkEndpo
                     override fun onComplete() { /* do nothing */
                     }
 
-                    override fun onSubscribe(d: Disposable?) {  /* do nothing */
+                    override fun onSubscribe(d: Disposable) {  /* do nothing */
                     }
 
-                    override fun onError(e: Throwable?) {
-                        Log.e(Repository::class.java.simpleName, e?.message, e)
+                    override fun onError(e: Throwable) {
+                        Log.e(Repository::class.java.simpleName, e.message, e)
                     }
                 })
         }

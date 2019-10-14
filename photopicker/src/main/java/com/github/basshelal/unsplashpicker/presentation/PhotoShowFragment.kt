@@ -15,7 +15,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
@@ -50,7 +49,11 @@ public class PhotoShowFragment : Fragment() {
             ?.addCallback(onBackPressed)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_image_show, container, false)
     }
 
@@ -71,7 +74,7 @@ public class PhotoShowFragment : Fragment() {
             .into(image_photoView, object : Callback.EmptyCallback() {
                 override fun onSuccess() {
                     image_photoView?.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
-                    image_photoView?.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    image_photoView?.updateLayoutParams {
                         height = WRAP_CONTENT
                     }
                     imageShow_constraintLayout?.setOnClickListener {

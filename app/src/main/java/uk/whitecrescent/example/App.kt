@@ -12,7 +12,8 @@ class App : Application() {
             application = this,
             accessKey = ACCESS_KEY,
             secretKey = SECRET_KEY,
-            unsplashAppName = APP_NAME
+            unsplashAppName = APP_NAME,
+            isLoggingEnabled = true
         )
     }
 }
