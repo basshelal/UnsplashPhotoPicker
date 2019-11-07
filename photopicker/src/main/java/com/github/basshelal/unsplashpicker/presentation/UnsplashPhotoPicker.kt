@@ -23,6 +23,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -320,7 +321,8 @@ public class UnsplashPhotoPicker
      * The first parameter is the [UnsplashPhoto] that the [ImageView] is holding.
      * The second parameter is the clicked [ImageView].
      */
-    var onClickPhoto: OnClickPhotoCallback = { unsplashPhoto, imageView -> }
+    var onClickPhoto: OnClickPhotoCallback =
+        { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
 
     /**
      * The [OnClickPhotoCallback] called when an [UnsplashPhoto] in [unsplashPhotoPickerRecyclerView] is long clicked.
@@ -328,7 +330,8 @@ public class UnsplashPhotoPicker
      * The first parameter is the [UnsplashPhoto] that the [ImageView] is holding.
      * The second parameter is the long clicked [ImageView].
      */
-    var onLongClickPhoto: OnClickPhotoCallback = { unsplashPhoto, imageView -> }
+    var onLongClickPhoto: OnClickPhotoCallback =
+        { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
 
     // Other
 
@@ -619,6 +622,7 @@ public class UnsplashPhotoPicker
  * Read more about Photo sizes on the official
  * [Unsplash Documentation](https://unsplash.com/documentation#dynamically-resizable-images)
  */
+@Keep
 public enum class PhotoSize {
     THUMB, SMALL, MEDIUM, REGULAR, LARGE, FULL, RAW;
 

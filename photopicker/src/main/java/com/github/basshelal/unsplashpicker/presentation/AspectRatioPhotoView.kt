@@ -4,11 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import com.github.chrisbanes.photoview.PhotoView
 
-internal class AspectRatioPhotoView @JvmOverloads constructor(
+internal class AspectRatioPhotoView
+@JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : PhotoView(context, attrs, defStyleAttr) {
 
-    var aspectRatio: Double = -1.0
+    internal var aspectRatio: Double = -1.0
         set(value) {
             field = value
             invalidate()

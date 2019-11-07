@@ -11,7 +11,7 @@ internal class EditTextView
     defStyle: Int = 0
 ) : AppCompatEditText(context, attributeSet, defStyle) {
 
-    var isEditable: Boolean = true
+    internal var isEditable: Boolean = true
         set(value) {
             field = value
             isCursorVisible = value
