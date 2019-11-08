@@ -13,6 +13,7 @@ import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -30,6 +31,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.basshelal.unsplashpicker.R
@@ -380,6 +382,10 @@ public class UnsplashPhotoPicker
             errorDrawable
         )
 
+        Repository.networkState.observe(context, Observer {
+            Log.e("NetworkState", "$it")
+        })
+
         unsplashPhotoPickerRecyclerView?.apply {
             setHasFixedSize(true)
             itemAnimator = null
@@ -607,7 +613,7 @@ public class UnsplashPhotoPicker
                 else Repository.searchPhotos(text.toString(), pageSize)
             }.subscribe {
                 adapter.submitList(it) {
-                    unsplashPhotoPickerRecyclerView?.smoothScrollToPosition(0)
+                    unsplashPhotoPickerRecyclerView?.scrollToPosition(0)
                 }
                 this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
             }

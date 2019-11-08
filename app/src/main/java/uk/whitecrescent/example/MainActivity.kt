@@ -31,19 +31,27 @@ class MainActivity : AppCompatActivity() {
             onLongClickPhoto = { unsplashPhoto: UnsplashPhoto, imageView: ImageView ->
                 selectPhoto(unsplashPhoto)
                 shortSnackbar("Selected ${selectedPhotos.size} Photos")
+
+                Snackbar.make(
+                    this,
+                    "Selected ${selectedPhotos.size} Photos",
+                    Snackbar.LENGTH_SHORT
+                ).apply {
+                    setAction("Clear Selection") { clearSelectedPhotos() }
+                }.show()
             }
         }
     }
 
     fun View.shortSnackbar(text: String) {
         Snackbar.make(this, text, Snackbar.LENGTH_SHORT).apply {
-            setAction("OK", { dismiss() })
+            setAction("OK") { dismiss() }
         }.show()
     }
 
     fun View.longSnackbar(text: String) {
         Snackbar.make(this, text, Snackbar.LENGTH_LONG).apply {
-            setAction("OK", { dismiss() })
+            setAction("OK") { dismiss() }
         }.show()
     }
 
