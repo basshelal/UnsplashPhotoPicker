@@ -3,6 +3,7 @@
 package com.github.basshelal.unsplashpicker.network
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
@@ -23,9 +24,11 @@ internal object Repository {
 
     private val networkEndpoints = createNetworkEndpoints()
 
+    val networkState = MutableLiveData<NetworkState>()
+
     fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
-            LoadPhotoDataSourceFactory(networkEndpoints),
+            DataSourceFactory { LoadPhotoDataSource(networkEndpoints) },
             PagedList.Config.Builder()
                 .setInitialLoadSizeHint(pageSize)
                 .setPageSize(pageSize)
@@ -35,7 +38,7 @@ internal object Repository {
 
     fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
-            SearchPhotoDataSourceFactory(networkEndpoints, criteria),
+            DataSourceFactory { SearchPhotoDataSource(networkEndpoints, criteria) },
             PagedList.Config.Builder()
                 .setInitialLoadSizeHint(pageSize)
                 .setPageSize(pageSize)

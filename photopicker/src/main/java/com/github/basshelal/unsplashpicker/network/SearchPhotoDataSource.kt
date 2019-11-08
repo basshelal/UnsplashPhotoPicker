@@ -1,9 +1,9 @@
 package com.github.basshelal.unsplashpicker.network
 
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
+import com.github.basshelal.unsplashpicker.network.Repository.networkState
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import retrofit2.Response
@@ -17,13 +17,14 @@ internal class SearchPhotoDataSource(
     private val criteria: String
 ) : PageKeyedDataSource<Int, UnsplashPhoto>() {
 
-    val networkStateLiveData = MutableLiveData<NetworkState>()
-
     private var lastPage: Int? = null
 
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, UnsplashPhoto>) {
+    override fun loadInitial(
+        params: LoadInitialParams<Int>,
+        callback: LoadInitialCallback<Int, UnsplashPhoto>
+    ) {
         // updating the network state to loading
-        networkStateLiveData.postValue(NetworkState.LOADING)
+        networkState.postValue(NetworkState.LOADING)
         // api call for the first page
         networkEndpoints.searchPhotos(
             UnsplashPhotoPickerConfig.accessKey,
@@ -46,20 +47,21 @@ internal class SearchPhotoDataSource(
                     // we push the result on the paging callback
                     // we update the network state to success
                     if (response.isSuccessful) {
-                        lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
+                        lastPage = response.headers().get("x-total")
+                            ?.toInt()?.div(params.requestedLoadSize)
                         callback.onResult(response.body()?.results!!, null, 2)
-                        networkStateLiveData.postValue(NetworkState.SUCCESS)
+                        networkState.postValue(NetworkState.SUCCESS)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkStateLiveData.postValue(NetworkState.error(response.message()))
+                        networkState.postValue(NetworkState.error(response.message()))
                     }
                 }
 
                 override fun onError(e: Throwable) {
                     // we update the network state to error along with the error message
-                    networkStateLiveData.postValue(NetworkState.error(e.message))
+                    networkState.postValue(NetworkState.error(e.message))
                 }
             })
     }
@@ -67,7 +69,7 @@ internal class SearchPhotoDataSource(
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
         val page = params.key
         // updating the network state to loading
-        networkStateLiveData.postValue(NetworkState.LOADING)
+        networkState.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
         networkEndpoints.searchPhotos(
             UnsplashPhotoPickerConfig.accessKey,
@@ -92,18 +94,18 @@ internal class SearchPhotoDataSource(
                     if (response.isSuccessful) {
                         val nextPage = if (page == lastPage) null else page + 1
                         callback.onResult(response.body()?.results!!, nextPage)
-                        networkStateLiveData.postValue(NetworkState.SUCCESS)
+                        networkState.postValue(NetworkState.SUCCESS)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkStateLiveData.postValue(NetworkState.error(response.message()))
+                        networkState.postValue(NetworkState.error(response.message()))
                     }
                 }
 
                 override fun onError(e: Throwable) {
                     // we update the network state to error along with the error message
-                    networkStateLiveData.postValue(NetworkState.error(e.message))
+                    networkState.postValue(NetworkState.error(e.message))
                 }
             })
     }
@@ -112,3 +114,9 @@ internal class SearchPhotoDataSource(
         // we do nothing here because everything will be loaded
     }
 }
+
+internal data class SearchResponse(
+    val total: Int,
+    val total_pages: Int,
+    val results: List<UnsplashPhoto>
+)
