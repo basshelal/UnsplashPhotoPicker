@@ -8,11 +8,10 @@ import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
  * Android paging library data source factory.
  * This will create the search photo data source.
  */
-internal class SearchPhotoDataSourceFactory constructor(
+internal class SearchPhotoDataSourceFactory(
     private val networkEndpoints: NetworkEndpoints,
     private val criteria: String
-) :
-    DataSource.Factory<Int, UnsplashPhoto>() {
+) : DataSource.Factory<Int, UnsplashPhoto>() {
 
     val sourceLiveData = MutableLiveData<SearchPhotoDataSource>()
 

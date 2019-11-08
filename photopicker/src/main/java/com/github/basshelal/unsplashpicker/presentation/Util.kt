@@ -30,3 +30,15 @@ inline internal fun convertPxToDp(px: Number, context: Context): Int {
     return (px.toFloat() / (context.resources.displayMetrics.densityDpi.toFloat() /
             DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
 }
+
+inline internal val Number.D: Double
+    get() = this.toDouble()
+
+inline internal val Number.L: Long
+    get() = this.toLong()
+
+inline internal val Number.F: Float
+    get() = this.toFloat()
+
+inline internal val Number.I: Int
+    get() = this.toInt()

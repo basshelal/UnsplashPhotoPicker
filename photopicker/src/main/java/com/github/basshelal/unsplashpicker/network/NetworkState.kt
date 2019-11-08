@@ -1,9 +1,8 @@
 package com.github.basshelal.unsplashpicker.network
 
-/*
-This has been copied from the Android paging library sample
- */
+import androidx.annotation.Keep
 
+@Keep
 internal enum class Status {
     LOADING,
     SUCCESS,

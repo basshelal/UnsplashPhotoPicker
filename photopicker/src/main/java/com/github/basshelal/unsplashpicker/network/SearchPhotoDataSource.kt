@@ -17,13 +17,13 @@ internal class SearchPhotoDataSource(
     private val criteria: String
 ) : PageKeyedDataSource<Int, UnsplashPhoto>() {
 
-    val networkState = MutableLiveData<NetworkState>()
+    val networkStateLiveData = MutableLiveData<NetworkState>()
 
     private var lastPage: Int? = null
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, UnsplashPhoto>) {
         // updating the network state to loading
-        networkState.postValue(NetworkState.LOADING)
+        networkStateLiveData.postValue(NetworkState.LOADING)
         // api call for the first page
         networkEndpoints.searchPhotos(
             UnsplashPhotoPickerConfig.accessKey,
@@ -48,30 +48,31 @@ internal class SearchPhotoDataSource(
                     if (response.isSuccessful) {
                         lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
                         callback.onResult(response.body()?.results!!, null, 2)
-                        networkState.postValue(NetworkState.SUCCESS)
+                        networkStateLiveData.postValue(NetworkState.SUCCESS)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkState.postValue(NetworkState.error(response.message()))
+                        networkStateLiveData.postValue(NetworkState.error(response.message()))
                     }
                 }
 
                 override fun onError(e: Throwable) {
                     // we update the network state to error along with the error message
-                    networkState.postValue(NetworkState.error(e.message))
+                    networkStateLiveData.postValue(NetworkState.error(e.message))
                 }
             })
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
+        val page = params.key
         // updating the network state to loading
-        networkState.postValue(NetworkState.LOADING)
+        networkStateLiveData.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
         networkEndpoints.searchPhotos(
             UnsplashPhotoPickerConfig.accessKey,
             criteria,
-            params.key,
+            page,
             params.requestedLoadSize
         )
             .subscribe(object : Observer<Response<SearchResponse>> {
@@ -89,20 +90,20 @@ internal class SearchPhotoDataSource(
                     // we push the result on the paging callback
                     // we update the network state to success
                     if (response.isSuccessful) {
-                        val nextPage = if (params.key == lastPage) null else params.key + 1
+                        val nextPage = if (page == lastPage) null else page + 1
                         callback.onResult(response.body()?.results!!, nextPage)
-                        networkState.postValue(NetworkState.SUCCESS)
+                        networkStateLiveData.postValue(NetworkState.SUCCESS)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkState.postValue(NetworkState.error(response.message()))
+                        networkStateLiveData.postValue(NetworkState.error(response.message()))
                     }
                 }
 
                 override fun onError(e: Throwable) {
                     // we update the network state to error along with the error message
-                    networkState.postValue(NetworkState.error(e.message))
+                    networkStateLiveData.postValue(NetworkState.error(e.message))
                 }
             })
     }

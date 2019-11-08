@@ -29,7 +29,7 @@ internal interface NetworkEndpoints {
     ): Observable<Response<SearchResponse>>
 
     @GET
-    fun trackDownload(@Url url: String): Completable
+    fun downloadPhoto(@Url url: String): Completable
 
     companion object {
         const val BASE_URL = "https://api.unsplash.com/"

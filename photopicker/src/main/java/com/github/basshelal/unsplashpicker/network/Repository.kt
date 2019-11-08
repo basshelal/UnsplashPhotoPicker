@@ -43,10 +43,10 @@ internal object Repository {
         ).buildObservable()
     }
 
-    fun trackDownload(url: String?) {
+    fun downloadPhoto(url: String?) {
         if (url != null) {
             val authUrl = url + "?client_id=" + UnsplashPhotoPickerConfig.accessKey
-            networkEndpoints.trackDownload(authUrl)
+            networkEndpoints.downloadPhoto(authUrl)
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe(object : CompletableObserver {

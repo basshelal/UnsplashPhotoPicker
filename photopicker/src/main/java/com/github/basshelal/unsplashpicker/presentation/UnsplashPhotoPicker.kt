@@ -73,7 +73,8 @@ public class UnsplashPhotoPicker
 
     //region Privates
 
-    private val attrs = context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
+    private val attrs =
+        context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
     private var adapter: UnsplashPhotoAdapter
 
     private inline val activity: AppCompatActivity
@@ -210,7 +211,12 @@ public class UnsplashPhotoPicker
      * the default of [PhotoSize.SMALL] should be clear enough for most use cases.
      */
     var pickerPhotoSize: PhotoSize =
-        PhotoSize.valueOf(attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_pickerPhotoSize, 1))
+        PhotoSize.valueOf(
+            attrs.getInt(
+                R.styleable.UnsplashPhotoPicker_photoPicker_pickerPhotoSize,
+                1
+            )
+        )
         set(value) {
             field = value
             adapter.photoSize = value
@@ -223,7 +229,12 @@ public class UnsplashPhotoPicker
      * using [showPhoto].
      */
     var showPhotoSize: PhotoSize =
-        PhotoSize.valueOf(attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_showPhotoSize, 1))
+        PhotoSize.valueOf(
+            attrs.getInt(
+                R.styleable.UnsplashPhotoPicker_photoPicker_showPhotoSize,
+                1
+            )
+        )
 
     /**
      * Sets the hint to use on the [searchEditText], this defaults to *Search Unsplash photos*.
@@ -231,7 +242,8 @@ public class UnsplashPhotoPicker
      * You can change the hint either here or by changing it directly using [searchEditText].
      */
     var searchHint: String =
-        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_searchHint) ?: context.getString(R.string.search)
+        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_searchHint)
+            ?: context.getString(R.string.search)
         set(value) {
             field = value
             searchEditText?.hint = value
@@ -260,7 +272,8 @@ public class UnsplashPhotoPicker
      * this, it should have no leading or trailing spaces.
      */
     var onString: String =
-        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_onString) ?: context.getString(R.string.on)
+        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_onString)
+            ?: context.getString(R.string.on)
 
     /**
      * Defines whether a click will open a photo to show, done using [showPhoto], this defaults to `true`.
@@ -292,7 +305,7 @@ public class UnsplashPhotoPicker
      * Use this as a convenience if you want to change or access anything with the view itself.
      * Do not change its [RecyclerView.Adapter] as that is controlled internally.
      */
-    inline val unsplashPhotoPickerRecyclerView: RecyclerView?
+    inline val unsplashPhotoPickerRecyclerView: UnsplashPhotoPickerRecyclerView?
         get() = unsplashPicker_recyclerView
 
     /**
@@ -373,7 +386,8 @@ public class UnsplashPhotoPicker
             setHasFixedSize(true)
             itemAnimator = null
             overScrollMode = View.OVER_SCROLL_NEVER
-            layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager =
+                StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             adapter = this@UnsplashPhotoPicker.adapter
         }
 
@@ -396,7 +410,8 @@ public class UnsplashPhotoPicker
         }
 
         // The scroll listener that deals with the sliding search bar
-        unsplashPhotoPickerRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        unsplashPhotoPickerRecyclerView?.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
 
             var scrollingDown = false
             var scrollingUp = false
@@ -482,7 +497,8 @@ public class UnsplashPhotoPicker
      *      }
      * ```
      */
-    public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Unit) = this.apply { apply() }
+    public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Unit) =
+        this.apply { apply() }
 
     companion object {
 
@@ -503,8 +519,7 @@ public class UnsplashPhotoPicker
         public inline operator fun invoke(
             context: Context,
             apply: UnsplashPhotoPicker.() -> Unit = {}
-        ) =
-            get(context, apply)
+        ) = get(context, apply)
 
         /**
          * Returns an [UnsplashPhotoPicker] that with the passed in [apply] block applied to it.
@@ -525,7 +540,10 @@ public class UnsplashPhotoPicker
          *      )
          * ```
          */
-        public inline fun get(context: Context, apply: UnsplashPhotoPicker.() -> Unit = {}): UnsplashPhotoPicker {
+        public inline fun get(
+            context: Context,
+            apply: UnsplashPhotoPicker.() -> Unit = {}
+        ): UnsplashPhotoPicker {
             return UnsplashPhotoPicker(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
                     MATCH_PARENT, MATCH_PARENT
@@ -559,7 +577,21 @@ public class UnsplashPhotoPicker
          * @return the [unsplashPhotos] after they have sent a download request
          */
         public fun downloadPhotos(unsplashPhotos: List<UnsplashPhoto>) =
-            unsplashPhotos.onEach { Repository.trackDownload(it.links.download_location) }
+            unsplashPhotos.onEach { Repository.downloadPhoto(it.links.download_location) }
+
+        /**
+         * To abide by the
+         * [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines),
+         * you must request a download to the [unsplashPhoto] when you use it in your
+         * application. This is usually when the user has picked the image(s) they want to use and you
+         * will use them in your application.
+         *
+         * You **MUST** call this function when you will use the image to abide by the guidelines.
+         *
+         * @return the [unsplashPhoto] after it has sent a download request
+         */
+        public fun downloadPhoto(unsplashPhoto: UnsplashPhoto) =
+            unsplashPhoto.also { Repository.downloadPhoto(it.links.download_location) }
     }
 
     //endregion Public API functions
@@ -650,18 +682,16 @@ public enum class PhotoSize {
 internal inline val View.verticalMargin: Int
     get() = (layoutParams as ViewGroup.MarginLayoutParams).let { it.topMargin + it.bottomMargin }
 
-@Suppress("NOTHING_TO_INLINE")
 private inline fun View.slideUp(duration: Int = 200, amount: Float = -this.height.toFloat()) {
     ObjectAnimator.ofFloat(this, "translationY", amount - verticalMargin).apply {
-        this.duration = duration.toLong()
+        this.duration = duration.L
         this.interpolator = LinearInterpolator()
     }.start()
 }
 
-@Suppress("NOTHING_TO_INLINE")
 private inline fun View.slideDown(duration: Int = 200, amount: Float = 0F) {
     ObjectAnimator.ofFloat(this, "translationY", amount).apply {
-        this.duration = duration.toLong()
+        this.duration = duration.L
         this.interpolator = LinearInterpolator()
     }.start()
 }
