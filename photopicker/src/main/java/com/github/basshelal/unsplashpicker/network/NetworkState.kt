@@ -1,4 +1,4 @@
-package com.github.basshelal.unsplashpicker.domain
+package com.github.basshelal.unsplashpicker.network
 
 /*
 This has been copied from the Android paging library sample

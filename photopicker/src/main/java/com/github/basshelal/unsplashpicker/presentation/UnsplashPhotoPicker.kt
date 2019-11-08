@@ -33,11 +33,10 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.github.basshelal.unsplashpicker.Injector
 import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.github.basshelal.unsplashpicker.data.UnsplashUrls
-import com.github.basshelal.unsplashpicker.domain.Repository
+import com.github.basshelal.unsplashpicker.network.Repository
 import com.github.basshelal.unsplashpicker.presentation.PhotoSize.REGULAR
 import com.github.basshelal.unsplashpicker.presentation.UnsplashPhotoPicker.Companion.downloadPhotos
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -75,7 +74,6 @@ public class UnsplashPhotoPicker
     //region Privates
 
     private val attrs = context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
-    private val repository: Repository = Injector.repository
     private var adapter: UnsplashPhotoAdapter
 
     private inline val activity: AppCompatActivity
@@ -561,7 +559,7 @@ public class UnsplashPhotoPicker
          * @return the [unsplashPhotos] after they have sent a download request
          */
         public fun downloadPhotos(unsplashPhotos: List<UnsplashPhoto>) =
-            unsplashPhotos.onEach { Injector.repository.trackDownload(it.links.download_location) }
+            unsplashPhotos.onEach { Repository.trackDownload(it.links.download_location) }
     }
 
     //endregion Public API functions
@@ -576,8 +574,8 @@ public class UnsplashPhotoPicker
             .observeOn(AndroidSchedulers.mainThread())
             .observeOn(Schedulers.io())
             .switchMap { text ->
-                if (TextUtils.isEmpty(text)) repository.loadPhotos(pageSize)
-                else repository.searchPhotos(text.toString(), pageSize)
+                if (TextUtils.isEmpty(text)) Repository.loadPhotos(pageSize)
+                else Repository.searchPhotos(text.toString(), pageSize)
             }.subscribe {
                 adapter.submitList(it) {
                     unsplashPhotoPickerRecyclerView?.smoothScrollToPosition(0)

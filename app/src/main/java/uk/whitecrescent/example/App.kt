@@ -13,7 +13,7 @@ class App : Application() {
             accessKey = ACCESS_KEY,
             secretKey = SECRET_KEY,
             unsplashAppName = APP_NAME,
-            isLoggingEnabled = true
+            isLoggingEnabled = false
         )
     }
 }

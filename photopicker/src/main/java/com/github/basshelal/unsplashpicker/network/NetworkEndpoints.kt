@@ -1,5 +1,6 @@
-package com.github.basshelal.unsplashpicker.data
+package com.github.basshelal.unsplashpicker.network
 
+import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import io.reactivex.Completable
 import io.reactivex.Observable
 import retrofit2.Response

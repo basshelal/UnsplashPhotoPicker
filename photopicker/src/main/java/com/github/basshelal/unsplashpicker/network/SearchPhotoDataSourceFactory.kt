@@ -1,8 +1,7 @@
-package com.github.basshelal.unsplashpicker.domain
+package com.github.basshelal.unsplashpicker.network
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
-import com.github.basshelal.unsplashpicker.data.NetworkEndpoints
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 
 /**

@@ -1,9 +1,8 @@
-package com.github.basshelal.unsplashpicker.domain
+package com.github.basshelal.unsplashpicker.network
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
-import com.github.basshelal.unsplashpicker.data.NetworkEndpoints
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -11,10 +10,12 @@ import retrofit2.Response
 
 /**
  * Android paging library data source.
- * This will load the photos and allow an infinite scroll on the picker screen.
+ * This will load the photos for the search and allow an infinite scroll on the picker screen.
  */
-internal class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) :
-    PageKeyedDataSource<Int, UnsplashPhoto>() {
+internal class SearchPhotoDataSource(
+    private val networkEndpoints: NetworkEndpoints,
+    private val criteria: String
+) : PageKeyedDataSource<Int, UnsplashPhoto>() {
 
     val networkState = MutableLiveData<NetworkState>()
 
@@ -24,8 +25,13 @@ internal class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoint
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the first page
-        networkEndpoints.loadPhotos(UnsplashPhotoPickerConfig.accessKey, 1, params.requestedLoadSize)
-            .subscribe(object : Observer<Response<List<UnsplashPhoto>>> {
+        networkEndpoints.searchPhotos(
+            UnsplashPhotoPickerConfig.accessKey,
+            criteria,
+            1,
+            params.requestedLoadSize
+        )
+            .subscribe(object : Observer<Response<SearchResponse>> {
                 override fun onComplete() {
                     // do nothing on this terminal event
                 }
@@ -34,14 +40,14 @@ internal class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoint
                     // we don't keep the disposable
                 }
 
-                override fun onNext(response: Response<List<UnsplashPhoto>>) {
+                override fun onNext(response: Response<SearchResponse>) {
                     // if the response is successful
                     // we get the last page number
                     // we push the result on the paging callback
                     // we update the network state to success
                     if (response.isSuccessful) {
                         lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
-                        callback.onResult(response.body()!!, null, 2)
+                        callback.onResult(response.body()?.results!!, null, 2)
                         networkState.postValue(NetworkState.SUCCESS)
                     }
                     // if the response is not successful
@@ -62,8 +68,13 @@ internal class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoint
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
-        networkEndpoints.loadPhotos(UnsplashPhotoPickerConfig.accessKey, params.key, params.requestedLoadSize)
-            .subscribe(object : Observer<Response<List<UnsplashPhoto>>> {
+        networkEndpoints.searchPhotos(
+            UnsplashPhotoPickerConfig.accessKey,
+            criteria,
+            params.key,
+            params.requestedLoadSize
+        )
+            .subscribe(object : Observer<Response<SearchResponse>> {
                 override fun onComplete() {
                     // do nothing on this terminal event
                 }
@@ -72,14 +83,14 @@ internal class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoint
                     // we don't keep the disposable
                 }
 
-                override fun onNext(response: Response<List<UnsplashPhoto>>) {
+                override fun onNext(response: Response<SearchResponse>) {
                     // if the response is successful
                     // we get the next page number
                     // we push the result on the paging callback
                     // we update the network state to success
                     if (response.isSuccessful) {
                         val nextPage = if (params.key == lastPage) null else params.key + 1
-                        callback.onResult(response.body()!!, nextPage)
+                        callback.onResult(response.body()?.results!!, nextPage)
                         networkState.postValue(NetworkState.SUCCESS)
                     }
                     // if the response is not successful

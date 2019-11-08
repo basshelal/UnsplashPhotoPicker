@@ -1,20 +1,27 @@
-package com.github.basshelal.unsplashpicker.domain
+@file:Suppress("NOTHING_TO_INLINE")
+
+package com.github.basshelal.unsplashpicker.network
 
 import android.util.Log
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
-import com.github.basshelal.unsplashpicker.data.NetworkEndpoints
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import io.reactivex.CompletableObserver
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.Cache
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
-/**
- * Simple repository used as a proxy by the view models to fetch data.
- */
-internal class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
+internal object Repository {
+
+    private val networkEndpoints = createNetworkEndpoints()
 
     fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
@@ -54,5 +61,38 @@ internal class Repository constructor(private val networkEndpoints: NetworkEndpo
                     }
                 })
         }
+    }
+
+    private inline fun createHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            addNetworkInterceptor(
+                Interceptor { chain: Interceptor.Chain ->
+                    chain.proceed(
+                        chain.request().newBuilder()
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("Accept-Version", "v1")
+                            .build()
+                    )
+                }
+            )
+            if (UnsplashPhotoPickerConfig.isLoggingEnabled) {
+                addNetworkInterceptor(
+                    HttpLoggingInterceptor().also {
+                        it.level = HttpLoggingInterceptor.Level.BODY
+                    }
+                )
+            }
+            cache(Cache(UnsplashPhotoPickerConfig.application.cacheDir, 10L * 1024L * 1024L))
+        }.build()
+    }
+
+    private inline fun createNetworkEndpoints(): NetworkEndpoints {
+        return Retrofit.Builder()
+            .baseUrl(NetworkEndpoints.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(createHttpClient())
+            .build()
+            .create(NetworkEndpoints::class.java)
     }
 }
