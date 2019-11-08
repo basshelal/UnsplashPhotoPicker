@@ -37,11 +37,15 @@ class PhotoPickerFragment
         enterTransition = AutoTransition()
         exitTransition = AutoTransition()
 
-        (activity as? AppCompatActivity?)?.onBackPressedDispatcher
+        (activity as? AppCompatActivity)?.onBackPressedDispatcher
             ?.addCallback(onBackPressed)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_picker_show, container, false)
     }
 
@@ -55,7 +59,7 @@ class PhotoPickerFragment
 
     private inline fun finish() {
         onBackPressed.isEnabled = false
-        (activity as? AppCompatActivity?)?.supportFragmentManager?.beginTransaction()
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
             ?.remove(this)
             ?.commit()
     }
@@ -75,7 +79,7 @@ class PhotoPickerFragment
          *
          * You should only use this instead of [show] if you want to show the [PhotoPickerFragment]
          * yourself, meaning perform the [androidx.fragment.app.FragmentTransaction] yourself.
-         * Otherwise you should use [show] instead.
+         * Otherwise you should use [show] instead which will do the transaction for you.
          */
         public fun newInstance(apply: UnsplashPhotoPicker.() -> Unit): PhotoPickerFragment {
             return PhotoPickerFragment(apply)
@@ -86,8 +90,6 @@ class PhotoPickerFragment
          * [apply] block applied to it and returns the [PhotoPickerFragment].
          *
          * The [container] is the [IdRes] of the container View, which will default to the main content
-         *
-         * This is just a wrapper around [PhotoPickerFragment.show]
          */
         public fun show(
             activity: AppCompatActivity,

@@ -45,7 +45,7 @@ public class PhotoShowFragment : Fragment() {
         enterTransition = AutoTransition()
         exitTransition = AutoTransition()
 
-        (activity as? AppCompatActivity?)?.onBackPressedDispatcher
+        (activity as? AppCompatActivity)?.onBackPressedDispatcher
             ?.addCallback(onBackPressed)
     }
 

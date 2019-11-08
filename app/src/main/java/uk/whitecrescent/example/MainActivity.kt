@@ -2,7 +2,10 @@ package uk.whitecrescent.example
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
+import com.github.basshelal.unsplashpicker.presentation.PhotoSize
 import com.github.basshelal.unsplashpicker.presentation.UnsplashPhotoPicker
 import com.google.android.material.snackbar.Snackbar
 
@@ -16,8 +19,19 @@ class MainActivity : AppCompatActivity() {
             hasSearch = true
             clickOpensPhoto = false
             longClickSelectsPhoto = false
-            onClickPhoto = { p, i -> shortSnackbar(p.user.name) }
-            onLongClickPhoto = { p, i -> showPhoto(p) }
+            isMultipleSelection = true
+
+            // below is the default behavior (excluding snackbars)
+            // if you set clickOpensPhoto and longClickSelectsPhoto to true
+            // but we've done it explicitly for demonstration purposes
+            onClickPhoto = { unsplashPhoto: UnsplashPhoto, imageView: ImageView ->
+                showPhoto(unsplashPhoto, PhotoSize.REGULAR)
+                shortSnackbar("Clicked ${unsplashPhoto.user.name}")
+            }
+            onLongClickPhoto = { unsplashPhoto: UnsplashPhoto, imageView: ImageView ->
+                selectPhoto(unsplashPhoto)
+                shortSnackbar("Selected ${selectedPhotos.size} Photos")
+            }
         }
     }
 

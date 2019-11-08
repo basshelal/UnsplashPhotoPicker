@@ -11,7 +11,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.SpannableStringBuilder
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
@@ -40,7 +39,6 @@ import com.github.basshelal.unsplashpicker.network.Repository
 import com.github.basshelal.unsplashpicker.presentation.PhotoSize.REGULAR
 import com.github.basshelal.unsplashpicker.presentation.UnsplashPhotoPicker.Companion.downloadPhotos
 import com.jakewharton.rxbinding2.widget.RxTextView
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.photo_picker.view.*
 import java.util.concurrent.TimeUnit
@@ -603,10 +601,9 @@ public class UnsplashPhotoPicker
         // The search EditText is what does everything! Any changes to it change the adapter contents
         RxTextView.textChanges(this)
             .debounce(500, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
             .observeOn(Schedulers.io())
-            .switchMap { text ->
-                if (TextUtils.isEmpty(text)) Repository.loadPhotos(pageSize)
+            .switchMap { text: CharSequence ->
+                if (text.isBlank()) Repository.loadPhotos(pageSize)
                 else Repository.searchPhotos(text.toString(), pageSize)
             }.subscribe {
                 adapter.submitList(it) {
@@ -619,8 +616,8 @@ public class UnsplashPhotoPicker
     private inline fun EditText.hideKeyboard() {
         if (this.hasFocus()) {
             this.clearFocus()
-            (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                .hideSoftInputFromWindow(windowToken, 0)
+            (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+                ?.hideSoftInputFromWindow(windowToken, 0)
         }
     }
 
