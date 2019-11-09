@@ -60,3 +60,4 @@ fastlane/readme.md
 
 # Keys
 app/src/main/java/uk/whitecrescent/example/Keys.kt
+photopicker/src/test/java/com/github/basshelal/unsplashpicker/Keys.kt

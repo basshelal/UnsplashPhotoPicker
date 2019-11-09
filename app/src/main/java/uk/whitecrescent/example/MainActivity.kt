@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
             }
             onLongClickPhoto = { unsplashPhoto: UnsplashPhoto, imageView: ImageView ->
                 selectPhoto(unsplashPhoto)
-                shortSnackbar("Selected ${selectedPhotos.size} Photos")
 
                 Snackbar.make(
                     this,

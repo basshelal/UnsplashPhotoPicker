@@ -31,39 +31,38 @@ internal class SearchPhotoDataSource(
             criteria,
             1,
             params.requestedLoadSize
-        )
-            .subscribe(object : Observer<Response<SearchResponse>> {
-                override fun onComplete() {
-                    // do nothing on this terminal event
-                }
+        ).subscribe(object : Observer<Response<SearchResponse>> {
+            override fun onComplete() {
+                // do nothing on this terminal event
+            }
 
-                override fun onSubscribe(d: Disposable) {
-                    // we don't keep the disposable
-                }
+            override fun onSubscribe(d: Disposable) {
+                // we don't keep the disposable
+            }
 
-                override fun onNext(response: Response<SearchResponse>) {
-                    // if the response is successful
-                    // we get the last page number
-                    // we push the result on the paging callback
-                    // we update the network state to success
-                    if (response.isSuccessful) {
-                        lastPage = response.headers().get("x-total")
-                            ?.toInt()?.div(params.requestedLoadSize)
-                        callback.onResult(response.body()?.results!!, null, 2)
-                        networkState.postValue(NetworkState.SUCCESS)
-                    }
-                    // if the response is not successful
-                    // we update the network state to error along with the error message
-                    else {
-                        networkState.postValue(NetworkState.error(response.message()))
-                    }
+            override fun onNext(response: Response<SearchResponse>) {
+                // if the response is successful
+                // we get the last page number
+                // we push the result on the paging callback
+                // we update the network state to success
+                if (response.isSuccessful) {
+                    lastPage = response.headers().get("x-total")
+                        ?.toInt()?.div(params.requestedLoadSize)
+                    callback.onResult(response.body()?.results!!, null, 2)
+                    networkState.postValue(NetworkState.SUCCESS)
                 }
+                // if the response is not successful
+                // we update the network state to error along with the error message
+                else {
+                    networkState.postValue(NetworkState.error(response.message()))
+                }
+            }
 
-                override fun onError(e: Throwable) {
-                    // we update the network state to error along with the error message
-                    networkState.postValue(NetworkState.error(e.message))
-                }
-            })
+            override fun onError(e: Throwable) {
+                // we update the network state to error along with the error message
+                networkState.postValue(NetworkState.error(e.message))
+            }
+        })
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
@@ -76,38 +75,37 @@ internal class SearchPhotoDataSource(
             criteria,
             page,
             params.requestedLoadSize
-        )
-            .subscribe(object : Observer<Response<SearchResponse>> {
-                override fun onComplete() {
-                    // do nothing on this terminal event
-                }
+        ).subscribe(object : Observer<Response<SearchResponse>> {
+            override fun onComplete() {
+                // do nothing on this terminal event
+            }
 
-                override fun onSubscribe(d: Disposable) {
-                    // we don't keep the disposable
-                }
+            override fun onSubscribe(d: Disposable) {
+                // we don't keep the disposable
+            }
 
-                override fun onNext(response: Response<SearchResponse>) {
-                    // if the response is successful
-                    // we get the next page number
-                    // we push the result on the paging callback
-                    // we update the network state to success
-                    if (response.isSuccessful) {
-                        val nextPage = if (page == lastPage) null else page + 1
-                        callback.onResult(response.body()?.results!!, nextPage)
-                        networkState.postValue(NetworkState.SUCCESS)
-                    }
-                    // if the response is not successful
-                    // we update the network state to error along with the error message
-                    else {
-                        networkState.postValue(NetworkState.error(response.message()))
-                    }
+            override fun onNext(response: Response<SearchResponse>) {
+                // if the response is successful
+                // we get the next page number
+                // we push the result on the paging callback
+                // we update the network state to success
+                if (response.isSuccessful) {
+                    val nextPage = if (page == lastPage) null else page + 1
+                    callback.onResult(response.body()?.results!!, nextPage)
+                    networkState.postValue(NetworkState.SUCCESS)
                 }
+                // if the response is not successful
+                // we update the network state to error along with the error message
+                else {
+                    networkState.postValue(NetworkState.error(response.message()))
+                }
+            }
 
-                override fun onError(e: Throwable) {
-                    // we update the network state to error along with the error message
-                    networkState.postValue(NetworkState.error(e.message))
-                }
-            })
+            override fun onError(e: Throwable) {
+                // we update the network state to error along with the error message
+                networkState.postValue(NetworkState.error(e.message))
+            }
+        })
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
