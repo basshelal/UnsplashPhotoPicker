@@ -28,6 +28,7 @@ The original only launched an `Activity` for you which you had no control of, th
     - [Showing a Photo](#showing-a-photo)
     - [Internationalization (i18n)](#internationalization-i18n)
   - [Abiding by the Unsplash API Guidelines](#abiding-by-the-unsplash-api-guidelines)
+  - [Download Sample App](#download-sample-app)
   - [Special Thanks](#special-thanks)
   - [License](#license)
 
@@ -213,6 +214,13 @@ This is done for you as you provide the Unsplash app name when you call `Unsplas
 1.   *Your application’s Access Key and Secret Key  must remain confidential. This means that they cannot be included in the client or made public. In most cases, this will require proxying the API through your own endpoint to sign the request with your keys.*
 
 This one's on you. I recommend you make a `Keys.kt` file containing 2 `String` `const val`s, one for the Access key and one for the Secret key by add the file to the `.gitignore` file so it doesn't get checked into Version Control. This solution has worked for me but be sure to test it yourself. Again, I am not responsible or liable if you mess up.
+
+## Download Sample App
+
+Download by clicking or using the QR Code below on your device:
+
+
+[![Sample App Download from QR Code](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/pictures/QRCode.png)](https://github.com/basshelal/UnsplashPhotoPicker/blob/master/UnsplashPhotoPicker.apk?raw=true)
 
 ## Special Thanks
 
