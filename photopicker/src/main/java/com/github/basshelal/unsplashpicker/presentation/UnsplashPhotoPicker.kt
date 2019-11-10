@@ -657,7 +657,7 @@ public class UnsplashPhotoPicker
  */
 @Keep
 public enum class PhotoSize {
-    THUMB, SMALL, MEDIUM, REGULAR, LARGE, FULL, RAW;
+    THUMB, SMALL, REGULAR, FULL, RAW;
 
     /**
      * Gets the [String] of the Url of this [PhotoSize] from the provided [UnsplashUrls]
@@ -666,9 +666,7 @@ public enum class PhotoSize {
         return when (this) {
             THUMB -> urls.thumb
             SMALL -> urls.small
-            MEDIUM -> urls.medium
             REGULAR -> urls.regular
-            LARGE -> urls.large
             FULL -> urls.full
             RAW -> urls.raw
         }
