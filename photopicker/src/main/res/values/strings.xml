@@ -12,4 +12,5 @@
     <string name="unsplash">Unsplash</string>
     <string name="photoBy">Photo by</string>
     <string name="on">on</string>
+    <string name="unsplashPhotoPicker">Unsplash Photo Picker</string>
 </resources>
