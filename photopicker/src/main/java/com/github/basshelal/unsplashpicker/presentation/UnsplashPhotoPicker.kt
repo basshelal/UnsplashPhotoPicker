@@ -1,6 +1,7 @@
 @file:Suppress(
     "UNUSED_ANONYMOUS_PARAMETER", "RedundantVisibilityModifier",
-    "unused", "MemberVisibilityCanBePrivate", "NOTHING_TO_INLINE"
+    "unused", "MemberVisibilityCanBePrivate", "NOTHING_TO_INLINE",
+    "RemoveRedundantQualifierName"
 )
 
 package com.github.basshelal.unsplashpicker.presentation
@@ -13,7 +14,6 @@ import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -23,15 +23,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.annotation.IntRange
 import androidx.annotation.Keep
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.basshelal.unsplashpicker.R
@@ -58,6 +58,9 @@ public typealias OnClickPhotoCallback = (UnsplashPhoto, ImageView) -> Unit
  * A complex View that displays a [RecyclerView] showing free high quality images from Unsplash.com
  * with a search bar at the top to search images from Unsplash.com.
  *
+ * To quickly get started you can call [UnsplashPhotoPicker.show] to get and show an [PhotoPickerFragment]
+ * or use it in your XML layouts. You can also create an [UnsplashPhotoPicker] in code by using [UnsplashPhotoPicker.get]
+ *
  * Remember to call [com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig.init] before you use this.
  * Also remember to call [downloadPhotos] when you will use the [UnsplashPhoto]s in your application in order
  * to abide by the [Unsplash API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines).
@@ -77,8 +80,8 @@ public class UnsplashPhotoPicker
         context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
     private var adapter: UnsplashPhotoAdapter
 
-    private inline val activity: AppCompatActivity
-        get() = context as AppCompatActivity
+    private inline val activity: FragmentActivity
+        get() = context as FragmentActivity
 
     private var onPhotoSelectedListener = object : OnPhotoSelectedListener {
         override fun onClickPhoto(photo: UnsplashPhoto, imageView: ImageView) {
@@ -93,7 +96,8 @@ public class UnsplashPhotoPicker
     }
 
     // When the user has searched something, a back press will clear the selection
-    val onBackPressed = object : OnBackPressedCallback(false) {
+    // as if the search was a new fragment even though it wasn't
+    private val onBackPressed = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             if (this@UnsplashPhotoPicker.search_editText?.text?.isNotBlank() == true) {
                 clearSelectedPhotos()
@@ -109,17 +113,20 @@ public class UnsplashPhotoPicker
     // region XML attributes
 
     /**
-     * Defines the page size that will be used when requesting images from Unsplash, this defaults to 50.
+     * Defines the page size that will be used when requesting images from Unsplash, this defaults to 15.
+     *
+     * This can only be in the range of 1 to 30 inclusive if it is greater, 30 will be used.
      *
      * A larger page size will mean less requests but a longer load time as each request will be larger,
      * a smaller page size will mean faster load times but possibly more requests depending on how many
      * images the user will go through.
      *
-     * This depends on your use case and the user's internet connection speed, the default value of 50
+     * This depends on your use case and the user's internet connection speed, the default value of 15
      * should be fine for most cases.
      */
+    @IntRange(from = 1, to = 30)
     var pageSize: Int =
-        attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_pageSize, 50)
+        attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_pageSize, 15)
 
     /**
      * The number of columns of images that will be displayed, this defaults to 2.
@@ -208,13 +215,15 @@ public class UnsplashPhotoPicker
      * this defaults to [PhotoSize.SMALL].
      *
      * Generally speaking, you want to keep this size small, to avoid large download sizes for each image,
-     * the default of [PhotoSize.SMALL] should be clear enough for most use cases.
+     * which would slow down each image's time to appear.
+     *
+     * The default of [PhotoSize.SMALL] should be clear enough for most use cases.
      */
     var pickerPhotoSize: PhotoSize =
         PhotoSize.valueOf(
             attrs.getInt(
                 R.styleable.UnsplashPhotoPicker_photoPicker_pickerPhotoSize,
-                1
+                PhotoSize.SMALL.ordinal
             )
         )
         set(value) {
@@ -223,7 +232,8 @@ public class UnsplashPhotoPicker
         }
 
     /**
-     * Sets the [PhotoSize] to use when showing an [UnsplashPhoto], this defaults to [PhotoSize.SMALL].
+     * Sets the [PhotoSize] to use when showing an [UnsplashPhoto] using [clickOpensPhoto],
+     * this defaults to [PhotoSize.SMALL].
      *
      * This has no effect if [clickOpensPhoto] is false. Note that you can show [UnsplashPhoto]s yourself by
      * using [showPhoto].
@@ -232,7 +242,7 @@ public class UnsplashPhotoPicker
         PhotoSize.valueOf(
             attrs.getInt(
                 R.styleable.UnsplashPhotoPicker_photoPicker_showPhotoSize,
-                1
+                PhotoSize.REGULAR.ordinal
             )
         )
 
@@ -288,7 +298,7 @@ public class UnsplashPhotoPicker
      * this defaults to `false`.
      *
      * Remember to set [isMultipleSelection] to `true` if you want the user to be able to
-     * select multiple photos, otherwise a long click will deselect all photos before selecting a photo.
+     * select multiple photos, otherwise a long click will deselect all photos before selecting a *single* photo.
      *
      * You can select a photo yourself using [selectPhoto].
      */
@@ -303,7 +313,7 @@ public class UnsplashPhotoPicker
      * Gets the [RecyclerView] used to display all the [UnsplashPhoto]s.
      *
      * Use this as a convenience if you want to change or access anything with the view itself.
-     * Do not change its [RecyclerView.Adapter] as that is controlled internally.
+     * Do NOT change its [RecyclerView.Adapter] as that is controlled internally.
      */
     inline val unsplashPhotoPickerRecyclerView: UnsplashPhotoPickerRecyclerView?
         get() = unsplashPicker_recyclerView
@@ -311,7 +321,7 @@ public class UnsplashPhotoPicker
     /**
      * Gets the [CardView] used to display the search bar.
      *
-     * Use this as a convenience if you want to change or access anything the withe view itself.
+     * Use this as a convenience if you want to change or access anything the with the view itself.
      */
     inline val searchCardView: CardView?
         get() = search_cardView
@@ -319,7 +329,7 @@ public class UnsplashPhotoPicker
     /**
      * Gets the [EditText] used to to search.
      *
-     * Use this as a convenience if you want to change or access anything the withe view itself.
+     * Use this as a convenience if you want to change or access anything the with the view itself.
      */
     inline val searchEditText: EditText?
         get() = search_editText
@@ -359,14 +369,15 @@ public class UnsplashPhotoPicker
     //endregion Public API
 
     init {
-        // The context must be an AppCompatActivity because we use Fragments to show and select photos
-        require(context is AppCompatActivity) {
+        // The context must be a FragmentActivity because we use Fragments to show and select photos
+        require(context is FragmentActivity) {
             "Unsplash Photo Picker Exception!\n\n" +
-                    "Context Activity must subclass AppCompatActivity, provided context class is ${context.javaClass}"
+                    "Context Activity must subclass FragmentActivity, provided context class is ${context.javaClass}"
         }
 
         View.inflate(context, R.layout.photo_picker, this)
 
+        // All attributes have already been used above
         attrs.recycle()
 
         searchCardView?.isVisible = hasSearch
@@ -382,13 +393,10 @@ public class UnsplashPhotoPicker
             errorDrawable
         )
 
-        Repository.networkState.observe(context, Observer {
-            Log.e("NetworkState", "$it")
-        })
-
         unsplashPhotoPickerRecyclerView?.apply {
             setHasFixedSize(true)
-            itemAnimator = null
+            // never overscroll because we do overscrolling animations ourselves,
+            // keeping Android overscrolls conflicts
             overScrollMode = View.OVER_SCROLL_NEVER
             layoutManager =
                 StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
@@ -398,13 +406,16 @@ public class UnsplashPhotoPicker
         // The clear ImageView only shows when the searchEditText isn't empty
         clearSearch_imageView?.isVisible = false
         clearSearch_imageView?.setOnClickListener {
-            searchEditText?.text = SpannableStringBuilder("")
+            searchEditText?.text?.clear()
         }
 
         // The searchEditText does pretty much everything
-        // if it's empty we get the photos Unsplash provides us,
+        // if it's empty we get the photos Unsplash provides us asynchronously,
         // otherwise we'll search the photos with the text in the EditText
         searchEditText?.bindSearch()
+        // When the text changes we also update some UI states but
+        // these don't depend on whether the results have returned or not (ie,
+        // they work when there is no internet)
         searchEditText?.addTextChangedListener {
             if (it != null) {
                 this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = true
@@ -414,41 +425,41 @@ public class UnsplashPhotoPicker
         }
 
         // The scroll listener that deals with the sliding search bar
-        unsplashPhotoPickerRecyclerView?.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
+        unsplashPhotoPickerRecyclerView?.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
 
-            var scrollingDown = false
-            var scrollingUp = false
+                var scrollingDown = false
+                var scrollingUp = false
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (hasSearch) {
-                    // Scrolling up
-                    if (dy > 0 && !scrollingUp) {
-                        if (!persistentSearch) {
-                            searchCardView?.slideUp()
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (hasSearch) {
+                        // Scrolling up
+                        if (dy > 0 && !scrollingUp) {
+                            if (!persistentSearch) {
+                                searchCardView?.slideUp()
+                            }
+                            scrollingUp = true
+                            scrollingDown = false
                         }
-                        scrollingUp = true
-                        scrollingDown = false
-                    }
-                    // Scrolling down
-                    if (dy <= 0 && !scrollingDown) {
-                        if (!persistentSearch) {
-                            searchCardView?.slideDown()
+                        // Scrolling down
+                        if (dy <= 0 && !scrollingDown) {
+                            if (!persistentSearch) {
+                                searchCardView?.slideDown()
+                            }
+                            scrollingDown = true
+                            scrollingUp = false
                         }
-                        scrollingDown = true
-                        scrollingUp = false
                     }
                 }
-            }
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (hasSearch) {
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        searchEditText?.hideKeyboard()
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (hasSearch) {
+                        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                            searchEditText?.hideKeyboard()
+                        }
                     }
                 }
-            }
-        })
+            })
         updatePadding()
     }
 
@@ -462,7 +473,9 @@ public class UnsplashPhotoPicker
     }
 
     /**
-     * Selects the provided [photo]
+     * Selects the provided [photo], remember to set [isMultipleSelection] to `true`
+     * if you want the user to be able to select multiple photos,
+     * otherwise this will deselect all photos before selecting a *single* photo.
      */
     public fun selectPhoto(photo: UnsplashPhoto) {
         adapter.selectPhoto(photo)
@@ -509,7 +522,7 @@ public class UnsplashPhotoPicker
         /**
          * For convenience and conciseness this is just a wrapper around [UnsplashPhotoPicker.get]
          *
-         * This allows you to create code like this in an [AppCompatActivity]:
+         * This allows you to create code like this in an [FragmentActivity]:
          * ```
          *      val picker = UnsplashPhotoPicker(context = this) {
          *          hasSearch = true
@@ -521,7 +534,7 @@ public class UnsplashPhotoPicker
          * ```
          */
         public inline operator fun invoke(
-            context: Context,
+            context: FragmentActivity,
             apply: UnsplashPhotoPicker.() -> Unit = {}
         ) = get(context, apply)
 
@@ -545,7 +558,7 @@ public class UnsplashPhotoPicker
          * ```
          */
         public inline fun get(
-            context: Context,
+            context: FragmentActivity,
             apply: UnsplashPhotoPicker.() -> Unit = {}
         ): UnsplashPhotoPicker {
             return UnsplashPhotoPicker(context).apply {
@@ -563,7 +576,7 @@ public class UnsplashPhotoPicker
          * This is just a wrapper around [PhotoPickerFragment.show]
          */
         public inline fun show(
-            activity: AppCompatActivity,
+            activity: FragmentActivity,
             @IdRes container: Int = android.R.id.content,
             noinline apply: UnsplashPhotoPicker.() -> Unit = {}
         ): PhotoPickerFragment =
@@ -572,7 +585,7 @@ public class UnsplashPhotoPicker
         /**
          * To abide by the
          * [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines),
-         * you must request a download to the [unsplashPhotos]s when you use them in your
+         * you MUST request a download to the [unsplashPhotos]s when you use them in your
          * application. This is usually when the user has picked the image(s) they want to use and you
          * will use them in your application.
          *
@@ -587,8 +600,8 @@ public class UnsplashPhotoPicker
          * To abide by the
          * [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines),
          * you must request a download to the [unsplashPhoto] when you use it in your
-         * application. This is usually when the user has picked the image(s) they want to use and you
-         * will use them in your application.
+         * application. This is usually when the user has picked the image they want to use and you
+         * will use it in your application.
          *
          * You **MUST** call this function when you will use the image to abide by the guidelines.
          *
@@ -621,6 +634,8 @@ public class UnsplashPhotoPicker
 
     private inline fun EditText.hideKeyboard() {
         if (this.hasFocus()) {
+            // lose the selection so that the paste menu that appears when you long hold disappears for good
+            this.setSelection(0)
             this.clearFocus()
             (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
                 ?.hideSoftInputFromWindow(windowToken, 0)
@@ -628,6 +643,7 @@ public class UnsplashPhotoPicker
     }
 
     private inline fun updatePadding() {
+        // Update the padding of the recyclerView to accommodate the search bar
         postDelayed(100) {
             val padding = if (hasSearch)
                 ((searchCardView?.height ?: 0) + (searchCardView?.verticalMargin ?: 0))
@@ -673,7 +689,7 @@ public enum class PhotoSize {
     }
 
     companion object {
-        fun valueOf(ordinal: Int) = values()[ordinal]
+        inline fun valueOf(ordinal: Int) = values()[ordinal]
     }
 }
 

@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.transition.AutoTransition
 import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.presentation.PhotoShowFragment.Companion.show
@@ -23,7 +23,9 @@ import kotlinx.android.synthetic.main.fragment_picker_show.*
  * You should use [PhotoPickerFragment.show] to quickly show an [UnsplashPhotoPicker] to the screen.
  */
 class PhotoPickerFragment
-@JvmOverloads constructor(private val apply: UnsplashPhotoPicker.() -> Unit = {}) : Fragment() {
+@JvmOverloads constructor(
+    private val apply: UnsplashPhotoPicker.() -> Unit = {}
+) : Fragment() {
 
     private val onBackPressed = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -37,8 +39,7 @@ class PhotoPickerFragment
         enterTransition = AutoTransition()
         exitTransition = AutoTransition()
 
-        (activity as? AppCompatActivity)?.onBackPressedDispatcher
-            ?.addCallback(onBackPressed)
+        activity?.onBackPressedDispatcher?.addCallback(onBackPressed)
     }
 
     override fun onCreateView(
@@ -59,7 +60,7 @@ class PhotoPickerFragment
 
     private inline fun finish() {
         onBackPressed.isEnabled = false
-        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
+        activity?.supportFragmentManager?.beginTransaction()
             ?.remove(this)
             ?.commit()
     }
@@ -92,7 +93,7 @@ class PhotoPickerFragment
          * The [container] is the [IdRes] of the container View, which will default to the main content
          */
         public fun show(
-            activity: AppCompatActivity,
+            activity: FragmentActivity,
             @IdRes container: Int = android.R.id.content,
             apply: UnsplashPhotoPicker.() -> Unit = {}
         ): PhotoPickerFragment {

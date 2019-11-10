@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.github.basshelal.unsplashpicker.presentation
 
 import android.graphics.Color
@@ -10,10 +12,10 @@ import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
+
 
 /**
  * The photos recycler view adapter.
@@ -54,13 +56,17 @@ internal class UnsplashPhotoAdapter(
             notifyDataSetChanged()
         }
 
-    // Key is index, Value is UnsplashPhoto
+    // Key is the index of the selected photo, value is the photo itself
     private val selected = LinkedHashMap<Int, UnsplashPhoto>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return PhotoViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_unsplash_photo, parent, false)
+                .inflate(
+                    com.github.basshelal.unsplashpicker.R.layout.item_unsplash_photo,
+                    parent,
+                    false
+                )
         )
     }
 
@@ -104,12 +110,12 @@ internal class UnsplashPhotoAdapter(
         if (!isMultipleSelection) {
             // single selection mode
             if (adapterPosition in selected.keys) {
-                selected.clear()
+                clearSelectedPhotos()
             } else {
-                selected.clear()
+                clearSelectedPhotos()
                 selected[adapterPosition] = photo
+                notifyItemChanged(adapterPosition)
             }
-            notifyDataSetChanged()
         } else {
             // multi selection mode
             if (adapterPosition in selected.keys) {
@@ -121,17 +127,25 @@ internal class UnsplashPhotoAdapter(
         }
     }
 
-    internal fun getSelectedPhotos() = selected.values.toList()
+    internal inline fun getSelectedPhotos() = selected.values.toList()
 
-    internal fun clearSelectedPhotos() {
+    internal inline fun clearSelectedPhotos() {
+        val originalKeys = selected.keys.toList()
         selected.clear()
-        notifyDataSetChanged()
+        originalKeys.forEach { notifyItemChanged(it) }
     }
 
     companion object {
         internal val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
-            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
-            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
+            override fun areItemsTheSame(
+                oldItem: UnsplashPhoto,
+                newItem: UnsplashPhoto
+            ) = oldItem == newItem
+
+            override fun areContentsTheSame(
+                oldItem: UnsplashPhoto,
+                newItem: UnsplashPhoto
+            ) = oldItem == newItem
         }
     }
 

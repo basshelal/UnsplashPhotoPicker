@@ -14,10 +14,10 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.transition.AutoTransition
 import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
@@ -45,8 +45,7 @@ public class PhotoShowFragment : Fragment() {
         enterTransition = AutoTransition()
         exitTransition = AutoTransition()
 
-        (activity as? AppCompatActivity)?.onBackPressedDispatcher
-            ?.addCallback(onBackPressed)
+        activity?.onBackPressedDispatcher?.addCallback(onBackPressed)
     }
 
     override fun onCreateView(
@@ -132,7 +131,7 @@ public class PhotoShowFragment : Fragment() {
 
     private inline fun finish() {
         onBackPressed.isEnabled = false
-        (activity as? AppCompatActivity?)?.supportFragmentManager?.beginTransaction()
+        activity?.supportFragmentManager?.beginTransaction()
             ?.remove(this)
             ?.commit()
     }
@@ -182,7 +181,7 @@ public class PhotoShowFragment : Fragment() {
         /**
          * Shows the provided [photo] with the provided [photoSize] and returns the [PhotoShowFragment].
          *
-         * You must provide the calling [AppCompatActivity] which will show this [PhotoShowFragment].
+         * You must provide the calling [FragmentActivity] which will show this [PhotoShowFragment].
          *
          * This just performs the [androidx.fragment.app.FragmentTransaction] for you, if you'd like to do so yourself,
          * you can use [newInstance].
@@ -192,7 +191,7 @@ public class PhotoShowFragment : Fragment() {
          * internationalization (i18n). Both strings must not contain leading or trailing spaces.
          */
         public fun show(
-            activity: AppCompatActivity,
+            activity: FragmentActivity,
             photo: UnsplashPhoto,
             @IdRes container: Int = android.R.id.content,
             photoSize: PhotoSize = PhotoSize.REGULAR,

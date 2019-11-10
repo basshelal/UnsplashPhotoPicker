@@ -174,7 +174,7 @@ You can show any `UnsplashPhoto` (even if you don't have an `UnsplashPhotoPicker
 
 ```kotlin
     PhotoShowFragment.show(
-        activity /*: AppCompatActivity*/,
+        activity /*: FragmentActivity*/,
         photo /*: UnsplashPhoto*/
     )
 ```

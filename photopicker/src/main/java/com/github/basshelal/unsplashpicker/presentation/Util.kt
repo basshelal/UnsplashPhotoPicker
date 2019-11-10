@@ -13,9 +13,8 @@ import kotlin.math.roundToInt
  * @param context Context to get resources and device specific display metrics
  * @return A float value to represent px equivalent to dp depending on device density
  */
-@PublishedApi
 inline internal fun convertDpToPx(dp: Number, context: Context): Int {
-    return (dp.toFloat() * (context.resources.displayMetrics.densityDpi.toFloat() /
+    return (dp.F * (context.resources.displayMetrics.densityDpi.F /
             DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
 }
 
@@ -27,7 +26,7 @@ inline internal fun convertDpToPx(dp: Number, context: Context): Int {
  * @return A float value to represent dp equivalent to px value
  */
 inline internal fun convertPxToDp(px: Number, context: Context): Int {
-    return (px.toFloat() / (context.resources.displayMetrics.densityDpi.toFloat() /
+    return (px.F / (context.resources.displayMetrics.densityDpi.F /
             DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
 }
 
