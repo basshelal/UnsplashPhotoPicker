@@ -19,7 +19,7 @@ data class UnsplashPhoto(
     val urls: UnsplashUrls,
     val links: UnsplashLinks,
     val user: UnsplashUser,
-    val sponsorship: @RawValue Any?
+    private val sponsorship: @RawValue Any?
 ) : Parcelable {
 
     /**
@@ -27,5 +27,5 @@ data class UnsplashPhoto(
      *
      * See more at the [official Unsplash website](https://unsplash.com/brands)
      */
-    inline val isSponsored: Boolean get() = sponsorship != null
+    val isSponsored: Boolean get() = sponsorship != null
 }
