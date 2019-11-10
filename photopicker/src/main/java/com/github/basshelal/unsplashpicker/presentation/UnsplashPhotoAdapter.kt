@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -75,23 +77,24 @@ internal class UnsplashPhotoAdapter(
         getItem(position)?.also { photo ->
             holder.apply {
                 // image
-                photoImageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
+                photoImageView.aspectRatio = photo.height.D / photo.width.D
                 itemView.setBackgroundColor(Color.parseColor(photo.color))
+
                 val request = Picasso.get()
                     .load(photoSize.get(photo.urls))
-
                 placeHolderDrawable?.also { request.placeholder(it) }
                 errorDrawable?.also { request.error(it) }
-
                 request.into(photoImageView)
+
+                photoImageView.contentDescription = photo.description
+                holder.sponsored.isVisible = photo.isSponsored
 
                 // photograph name
                 nameTextView.text = photo.user.name
 
                 // selected controls visibility
-
-                checkedImageView.visible = adapterPosition in selected.keys
-                overlay.visible = adapterPosition in selected.keys
+                checkedImageView.isVisible = adapterPosition in selected.keys
+                overlay.isVisible = adapterPosition in selected.keys
 
                 // click listeners
                 itemView.setOnLongClickListener {
@@ -106,7 +109,7 @@ internal class UnsplashPhotoAdapter(
     }
 
     internal fun selectPhoto(photo: UnsplashPhoto) {
-        val adapterPosition = currentList?.indexOf(photo) ?: -1
+        val adapterPosition = currentList?.indexOf(photo) ?: return
         if (!isMultipleSelection) {
             // single selection mode
             if (adapterPosition in selected.keys) {
@@ -150,13 +153,10 @@ internal class UnsplashPhotoAdapter(
     }
 
     internal class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val photoImageView: AspectRatioImageView = view.item_unsplash_photo_image_view
+        val photoImageView: AspectRatioImageView = view.item_imageView
         val nameTextView: TextView = view.item_unsplash_photo_text_view
         val checkedImageView: ImageView = view.item_unsplash_photo_checked_image_view
         val overlay: View = view.item_unsplash_photo_overlay
+        val sponsored: LinearLayout = view.sponsored_linearLayout
     }
 }
-
-private inline var View.visible: Boolean
-    set(value) = if (value) this.visibility = View.VISIBLE else this.visibility = View.INVISIBLE
-    get() = this.visibility == View.VISIBLE

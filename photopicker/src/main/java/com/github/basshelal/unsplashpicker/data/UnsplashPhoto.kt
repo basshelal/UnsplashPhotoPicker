@@ -2,6 +2,7 @@ package com.github.basshelal.unsplashpicker.data
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 
 /**
  * See the [official Unsplash API Photos section](https://unsplash.com/documentation#photos)
@@ -18,7 +19,7 @@ data class UnsplashPhoto(
     val urls: UnsplashUrls,
     val links: UnsplashLinks,
     val user: UnsplashUser,
-    val sponsorship: UnsplashSponsorship?
+    val sponsorship: @RawValue Any?
 ) : Parcelable {
 
     /**

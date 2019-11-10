@@ -48,7 +48,7 @@ internal object Repository {
 
     fun downloadPhoto(url: String?) {
         if (url != null) {
-            val authUrl = url + "?client_id=" + UnsplashPhotoPickerConfig.accessKey
+            val authUrl = "$url?client_id=${UnsplashPhotoPickerConfig.accessKey}"
             networkEndpoints.downloadPhoto(authUrl)
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())

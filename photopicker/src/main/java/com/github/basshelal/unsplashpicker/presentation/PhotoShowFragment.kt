@@ -24,7 +24,7 @@ import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_image_show.*
+import kotlinx.android.synthetic.main.fragment_photo_show.*
 
 /**
  * Used to show a single [UnsplashPhoto] on the screen.
@@ -53,7 +53,7 @@ public class PhotoShowFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_image_show, container, false)
+        return inflater.inflate(R.layout.fragment_photo_show, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -95,15 +95,7 @@ public class PhotoShowFragment : Fragment() {
                 it.setSpan(UnderlineSpan(), 1, it.length - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             setOnClickListener {
-                context.startActivity(
-                    Intent().apply {
-                        action = Intent.ACTION_VIEW
-                        addCategory(Intent.CATEGORY_BROWSABLE)
-                        data = Uri.parse(
-                            "https://unsplash.com/@${photo.user.username}" +
-                                    "?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
-                        )
-                    })
+                goToUrl("https://unsplash.com/@${photo.user.username}")
             }
         }
 
@@ -116,17 +108,27 @@ public class PhotoShowFragment : Fragment() {
                 it.setSpan(UnderlineSpan(), 1, it.length - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             setOnClickListener {
-                context.startActivity(
-                    Intent().apply {
-                        action = Intent.ACTION_VIEW
-                        addCategory(Intent.CATEGORY_BROWSABLE)
-                        data = Uri.parse(
-                            "https://unsplash.com/photos/${photo.id}" +
-                                    "?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
-                        )
-                    })
+                goToUrl("https://unsplash.com/photos/${photo.id}")
             }
         }
+
+        sponsored_linearLayout?.apply {
+            isVisible = photo.isSponsored
+            setOnClickListener {
+                goToUrl("https://unsplash.com/brands")
+            }
+        }
+    }
+
+    private inline fun goToUrl(url: String) {
+        context?.startActivity(
+            Intent().apply {
+                action = Intent.ACTION_VIEW
+                addCategory(Intent.CATEGORY_BROWSABLE)
+                data = Uri.parse(
+                    "$url?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
+                )
+            })
     }
 
     private inline fun finish() {

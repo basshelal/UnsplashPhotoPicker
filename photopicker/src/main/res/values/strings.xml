@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Photo Picker</string>
-    <string name="back">Back</string>
     <string name="checked">Checked</string>
     <string name="clear">Clear</string>
     <string name="done">Done</string>
@@ -13,4 +11,5 @@
     <string name="photoBy">Photo by</string>
     <string name="on">on</string>
     <string name="unsplashPhotoPicker">Unsplash Photo Picker</string>
+    <string name="sponsored">Sponsored</string>
 </resources>

@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.transition.AutoTransition
 import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.presentation.PhotoShowFragment.Companion.show
-import kotlinx.android.synthetic.main.fragment_picker_show.*
+import kotlinx.android.synthetic.main.fragment_photo_picker.*
 
 /**
  * Used to show an [UnsplashPhotoPicker] on the screen quickly without having to do the layout yourself.
@@ -47,7 +47,7 @@ class PhotoPickerFragment
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_picker_show, container, false)
+        return inflater.inflate(R.layout.fragment_photo_picker, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
