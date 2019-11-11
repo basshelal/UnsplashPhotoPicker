@@ -28,9 +28,7 @@ class PhotoPickerFragment
 ) : Fragment() {
 
     private val onBackPressed = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            finish()
-        }
+        override fun handleOnBackPressed() = finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

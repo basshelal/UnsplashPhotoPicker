@@ -11,7 +11,6 @@ import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.core.view.isVisible
@@ -34,9 +33,7 @@ import kotlinx.android.synthetic.main.fragment_photo_show.*
 public class PhotoShowFragment : Fragment() {
 
     private val onBackPressed = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            finish()
-        }
+        override fun handleOnBackPressed() = finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,14 +69,15 @@ public class PhotoShowFragment : Fragment() {
             .load(photoSize.get(photo.urls))
             .into(image_photoView, object : Callback.EmptyCallback() {
                 override fun onSuccess() {
-                    image_photoView?.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
-                    image_photoView?.updateLayoutParams {
-                        height = WRAP_CONTENT
+                    image_photoView?.apply {
+                        aspectRatio = photo.height.D / photo.width.D
+                        updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                            topMargin = if (photo.isSponsored) convertDpToPx(32, context!!) else 0
+                        }
                     }
                     imageShow_constraintLayout?.setOnClickListener {
                         finish()
                     }
-                    /* TODO update LayoutParams when any kind of zoom happens so that the zoomed image takes the whole screen */
                     image_progressBar?.isVisible = false
                 }
             })

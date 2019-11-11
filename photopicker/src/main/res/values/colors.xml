@@ -11,7 +11,7 @@
     <color name="photoPickerPrivate_pickerColorBackground">#ffffffff</color>
     <color name="photoPickerPrivate_searchBarBackground">#8FFFFFFF</color>
     <color name="photoPickerPrivate_searchBarImageTint">#FF000000</color>
-    <color name="photoPickerPrivate_showPhotoBackground">#8F000000</color>
+    <color name="photoPickerPrivate_showPhotoBackground">#EF000000</color>
     <color name="photoPickerPrivate_showPhotoTextColor">#ffffffff</color>
     <color name="photoPickerPrivate_colorGradientOverlay">#44000000</color>
     <color name="photoPickerPrivate_colorSelectedOverlay">#66ffffff</color>
