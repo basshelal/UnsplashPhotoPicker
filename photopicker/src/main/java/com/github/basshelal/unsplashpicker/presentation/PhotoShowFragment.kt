@@ -53,8 +53,8 @@ public class PhotoShowFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_photo_show, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         arguments?.getParcelable<UnsplashPhoto>(PHOTO)?.also { photo ->
             arguments?.getString(PHOTO_SIZE)?.also { size ->
