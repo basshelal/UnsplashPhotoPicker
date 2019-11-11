@@ -32,9 +32,9 @@ class MainActivity : AppCompatActivity() {
                 selectPhoto(unsplashPhoto)
 
                 Snackbar.make(
-                    this,
-                    "Selected ${selectedPhotos.size} Photos",
-                    Snackbar.LENGTH_SHORT
+                        this,
+                        "Selected ${selectedPhotos.size} Photos",
+                        Snackbar.LENGTH_SHORT
                 ).apply {
                     setAction("Clear Selection") { clearSelectedPhotos() }
                 }.show()

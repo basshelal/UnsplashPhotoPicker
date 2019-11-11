@@ -667,7 +667,8 @@ public class UnsplashPhotoPicker
 /**
  * Enum used denote all the possible photo sizes.
  *
- * Be careful with sizes greater than [REGULAR] as they could potentially take a lot of bandwidth.
+ * Be careful with sizes greater than [REGULAR] as they could potentially take a lot of bandwidth
+ * and not fit into the ImageView depending on its size
  *
  * Read more about Photo sizes on the official
  * [Unsplash Documentation](https://unsplash.com/documentation#dynamically-resizable-images)

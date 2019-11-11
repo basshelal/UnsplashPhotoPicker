@@ -9,7 +9,7 @@ internal enum class Status {
     FAILURE
 }
 
-internal enum class Error {
+internal enum class UnsplashPhotoPickerError {
     NO_INTERNET,
     NO_RESULTS,
     SERVER_ERROR,
