@@ -75,9 +75,6 @@ public class PhotoShowFragment : Fragment() {
                             topMargin = if (photo.isSponsored) convertDpToPx(32, context!!) else 0
                         }
                     }
-                    imageShow_constraintLayout?.setOnClickListener {
-                        finish()
-                    }
                     image_progressBar?.isVisible = false
                 }
             })
