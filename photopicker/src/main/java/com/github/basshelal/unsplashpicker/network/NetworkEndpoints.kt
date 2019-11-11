@@ -15,17 +15,17 @@ internal interface NetworkEndpoints {
 
     @GET("/photos")
     fun loadPhotos(
-        @Query("client_id") clientId: String,
-        @Query("page") page: Int,
-        @Query("per_page") pageSize: Int
+            @Query("client_id") clientId: String,
+            @Query("page") page: Int,
+            @Query("per_page") pageSize: Int
     ): Observable<Response<List<UnsplashPhoto>>>
 
     @GET("search/photos")
     fun searchPhotos(
-        @Query("client_id") clientId: String,
-        @Query("query") criteria: String,
-        @Query("page") page: Int,
-        @Query("per_page") pageSize: Int
+            @Query("client_id") clientId: String,
+            @Query("query") criteria: String,
+            @Query("page") page: Int,
+            @Query("per_page") pageSize: Int
     ): Observable<Response<SearchResponse>>
 
     @GET

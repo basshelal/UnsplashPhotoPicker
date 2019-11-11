@@ -13,22 +13,17 @@ import retrofit2.Response
  * This will load the photos and allow an infinite scroll on the picker screen.
  */
 internal class LoadPhotoDataSource(
-    private val networkEndpoints: NetworkEndpoints
+        private val networkEndpoints: NetworkEndpoints
 ) : PageKeyedDataSource<Int, UnsplashPhoto>() {
 
     private var lastPage: Int? = null
 
-    override fun loadInitial(
-        params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, UnsplashPhoto>
-    ) {
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, UnsplashPhoto>) {
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the first page
         networkEndpoints.loadPhotos(
-            UnsplashPhotoPickerConfig.accessKey,
-            1,
-            params.requestedLoadSize
+                UnsplashPhotoPickerConfig.accessKey, 1, params.requestedLoadSize
         ).subscribe(object : Observer<Response<List<UnsplashPhoto>>> {
             override fun onComplete() {
                 // do nothing on this terminal event
@@ -44,8 +39,7 @@ internal class LoadPhotoDataSource(
                 // we push the result on the paging callback
                 // we update the network state to success
                 if (response.isSuccessful) {
-                    lastPage = response.headers().get("x-total")?.toInt()
-                        ?.div(params.requestedLoadSize)
+                    lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
                     callback.onResult(response.body()!!, null, 2)
                     networkState.postValue(NetworkState.SUCCESS)
                 }
@@ -68,9 +62,7 @@ internal class LoadPhotoDataSource(
         networkState.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
         networkEndpoints.loadPhotos(
-            UnsplashPhotoPickerConfig.accessKey,
-            params.key,
-            params.requestedLoadSize
+                UnsplashPhotoPickerConfig.accessKey, params.key, params.requestedLoadSize
         ).subscribe(object : Observer<Response<List<UnsplashPhoto>>> {
             override fun onComplete() {
                 // do nothing on this terminal event

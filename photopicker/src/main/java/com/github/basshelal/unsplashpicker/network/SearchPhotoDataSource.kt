@@ -13,24 +13,19 @@ import retrofit2.Response
  * This will load the photos for the search and allow an infinite scroll on the picker screen.
  */
 internal class SearchPhotoDataSource(
-    private val networkEndpoints: NetworkEndpoints,
-    private val criteria: String
+        private val networkEndpoints: NetworkEndpoints,
+        private val criteria: String
 ) : PageKeyedDataSource<Int, UnsplashPhoto>() {
 
     private var lastPage: Int? = null
 
-    override fun loadInitial(
-        params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, UnsplashPhoto>
-    ) {
+    override fun loadInitial(params: LoadInitialParams<Int>,
+                             callback: LoadInitialCallback<Int, UnsplashPhoto>) {
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the first page
         networkEndpoints.searchPhotos(
-            UnsplashPhotoPickerConfig.accessKey,
-            criteria,
-            1,
-            params.requestedLoadSize
+                UnsplashPhotoPickerConfig.accessKey, criteria, 1, params.requestedLoadSize
         ).subscribe(object : Observer<Response<SearchResponse>> {
             override fun onComplete() {
                 // do nothing on this terminal event
@@ -45,10 +40,12 @@ internal class SearchPhotoDataSource(
                 // we get the last page number
                 // we push the result on the paging callback
                 // we update the network state to success
-                if (response.isSuccessful) {
-                    lastPage = response.headers().get("x-total")
-                        ?.toInt()?.div(params.requestedLoadSize)
-                    callback.onResult(response.body()?.results!!, null, 2)
+
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
+
+                    callback.onResult(body.results, null, 2)
                     networkState.postValue(NetworkState.SUCCESS)
                 }
                 // if the response is not successful
@@ -71,10 +68,7 @@ internal class SearchPhotoDataSource(
         networkState.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
         networkEndpoints.searchPhotos(
-            UnsplashPhotoPickerConfig.accessKey,
-            criteria,
-            page,
-            params.requestedLoadSize
+                UnsplashPhotoPickerConfig.accessKey, criteria, page, params.requestedLoadSize
         ).subscribe(object : Observer<Response<SearchResponse>> {
             override fun onComplete() {
                 // do nothing on this terminal event
@@ -114,7 +108,7 @@ internal class SearchPhotoDataSource(
 }
 
 internal data class SearchResponse(
-    val total: Int,
-    val total_pages: Int,
-    val results: List<UnsplashPhoto>
+        val total: Int,
+        val total_pages: Int,
+        val results: List<UnsplashPhoto>
 )

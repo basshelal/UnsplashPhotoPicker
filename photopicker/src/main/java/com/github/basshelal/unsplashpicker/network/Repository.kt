@@ -28,21 +28,21 @@ internal object Repository {
 
     fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
-            DataSourceFactory { LoadPhotoDataSource(networkEndpoints) },
-            PagedList.Config.Builder()
-                .setInitialLoadSizeHint(pageSize)
-                .setPageSize(pageSize)
-                .build()
+                DataSourceFactory { LoadPhotoDataSource(networkEndpoints) },
+                PagedList.Config.Builder()
+                        .setInitialLoadSizeHint(pageSize)
+                        .setPageSize(pageSize)
+                        .build()
         ).buildObservable()
     }
 
     fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
-            DataSourceFactory { SearchPhotoDataSource(networkEndpoints, criteria) },
-            PagedList.Config.Builder()
-                .setInitialLoadSizeHint(pageSize)
-                .setPageSize(pageSize)
-                .build()
+                DataSourceFactory { SearchPhotoDataSource(networkEndpoints, criteria) },
+                PagedList.Config.Builder()
+                        .setInitialLoadSizeHint(pageSize)
+                        .setPageSize(pageSize)
+                        .build()
         ).buildObservable()
     }
 
@@ -50,39 +50,39 @@ internal object Repository {
         if (url != null) {
             val authUrl = "$url?client_id=${UnsplashPhotoPickerConfig.accessKey}"
             networkEndpoints.downloadPhoto(authUrl)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : CompletableObserver {
-                    override fun onComplete() { /* do nothing */
-                    }
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(object : CompletableObserver {
+                        override fun onComplete() { /* do nothing */
+                        }
 
-                    override fun onSubscribe(d: Disposable) {  /* do nothing */
-                    }
+                        override fun onSubscribe(d: Disposable) {  /* do nothing */
+                        }
 
-                    override fun onError(e: Throwable) {
-                        Log.e(Repository::class.java.simpleName, e.message, e)
-                    }
-                })
+                        override fun onError(e: Throwable) {
+                            Log.e(Repository::class.java.simpleName, e.message, e)
+                        }
+                    })
         }
     }
 
     private inline fun createHttpClient(): OkHttpClient {
         return OkHttpClient.Builder().apply {
             addNetworkInterceptor(
-                Interceptor { chain: Interceptor.Chain ->
-                    chain.proceed(
-                        chain.request().newBuilder()
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("Accept-Version", "v1")
-                            .build()
-                    )
-                }
+                    Interceptor { chain: Interceptor.Chain ->
+                        chain.proceed(
+                                chain.request().newBuilder()
+                                        .addHeader("Content-Type", "application/json")
+                                        .addHeader("Accept-Version", "v1")
+                                        .build()
+                        )
+                    }
             )
             if (UnsplashPhotoPickerConfig.isLoggingEnabled) {
                 addNetworkInterceptor(
-                    HttpLoggingInterceptor().also {
-                        it.level = HttpLoggingInterceptor.Level.BODY
-                    }
+                        HttpLoggingInterceptor().also {
+                            it.level = HttpLoggingInterceptor.Level.BODY
+                        }
                 )
             }
             cache(Cache(UnsplashPhotoPickerConfig.application.cacheDir, 10L * 1024L * 1024L))
@@ -91,11 +91,11 @@ internal object Repository {
 
     private inline fun createNetworkEndpoints(): NetworkEndpoints {
         return Retrofit.Builder()
-            .baseUrl(NetworkEndpoints.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .client(createHttpClient())
-            .build()
-            .create(NetworkEndpoints::class.java)
+                .baseUrl(NetworkEndpoints.BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(createHttpClient())
+                .build()
+                .create(NetworkEndpoints::class.java)
     }
 }

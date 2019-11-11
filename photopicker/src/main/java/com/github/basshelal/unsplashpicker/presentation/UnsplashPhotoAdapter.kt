@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
@@ -25,11 +26,11 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This deals with either a single or multiple selection list.
  */
 internal class UnsplashPhotoAdapter(
-    isMultipleSelection: Boolean = false,
-    onPhotoSelectedListener: OnPhotoSelectedListener? = null,
-    photoSize: PhotoSize = PhotoSize.SMALL,
-    placeHolderDrawable: Drawable? = null,
-    errorDrawable: Drawable? = null
+        isMultipleSelection: Boolean = false,
+        onPhotoSelectedListener: OnPhotoSelectedListener? = null,
+        photoSize: PhotoSize = PhotoSize.SMALL,
+        placeHolderDrawable: Drawable? = null,
+        errorDrawable: Drawable? = null
 ) : PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
     internal var isMultipleSelection: Boolean = isMultipleSelection
@@ -63,12 +64,8 @@ internal class UnsplashPhotoAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return PhotoViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    com.github.basshelal.unsplashpicker.R.layout.item_unsplash_photo,
-                    parent,
-                    false
-                )
+                LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_unsplash_photo, parent, false)
         )
     }
 
@@ -80,8 +77,7 @@ internal class UnsplashPhotoAdapter(
                 photoImageView.aspectRatio = photo.height.D / photo.width.D
                 itemView.setBackgroundColor(Color.parseColor(photo.color))
 
-                val request = Picasso.get()
-                    .load(photoSize.get(photo.urls))
+                val request = Picasso.get().load(photoSize.get(photo.urls))
                 placeHolderDrawable?.also { request.placeholder(it) }
                 errorDrawable?.also { request.error(it) }
                 request.into(photoImageView)
@@ -140,15 +136,8 @@ internal class UnsplashPhotoAdapter(
 
     companion object {
         internal val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
-            override fun areItemsTheSame(
-                oldItem: UnsplashPhoto,
-                newItem: UnsplashPhoto
-            ) = oldItem == newItem
-
-            override fun areContentsTheSame(
-                oldItem: UnsplashPhoto,
-                newItem: UnsplashPhoto
-            ) = oldItem == newItem
+            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
+            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) = oldItem == newItem
         }
     }
 

@@ -42,11 +42,11 @@ public object UnsplashPhotoPickerConfig {
      * on how to get started and get your access key and secret key.
      */
     public fun init(
-        application: Application,
-        accessKey: String,
-        secretKey: String,
-        unsplashAppName: String,
-        isLoggingEnabled: Boolean = false
+            application: Application,
+            accessKey: String,
+            secretKey: String,
+            unsplashAppName: String,
+            isLoggingEnabled: Boolean = false
     ): UnsplashPhotoPickerConfig {
         this.application = application
         this.accessKey = accessKey

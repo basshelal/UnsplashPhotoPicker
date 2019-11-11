@@ -10,9 +10,9 @@ import me.everything.android.ui.overscroll.adapters.RecyclerViewOverScrollDecorA
 
 class UnsplashPhotoPickerRecyclerView
 @JvmOverloads constructor(
-    context: Context,
-    attributeSet: AttributeSet? = null,
-    defStyle: Int = 0
+        context: Context,
+        attributeSet: AttributeSet? = null,
+        defStyle: Int = 0
 ) : RecyclerView(context, attributeSet, defStyle) {
 
     private var savedState: SavedState? = null
@@ -44,24 +44,23 @@ class UnsplashPhotoPickerRecyclerView
         addVelocityTrackerOnFlingListener()
 
         addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 
-                    val dY = verticalScrollOffset.D - oldVerticalScrollOffset.D
-                    val dSecs = (System.currentTimeMillis() - oldTime).D / 1E3.D
+                        val dY = verticalScrollOffset.D - oldVerticalScrollOffset.D
+                        val dSecs = (System.currentTimeMillis() - oldTime).D / 1E3.D
 
-                    verticalScrollSpeed = (dY / dSecs).I
+                        verticalScrollSpeed = (dY / dSecs).I
 
-                    if (dy != 0 && scrollState == SCROLL_STATE_SETTLING &&
-                        (verticalScrollOffset == 0 || verticalScrollOffset == maxVerticalScroll)
-                    ) {
-                        overScroller?.overScroll()
+                        if (dy != 0 && scrollState == SCROLL_STATE_SETTLING &&
+                                (verticalScrollOffset == 0 || verticalScrollOffset == maxVerticalScroll)) {
+                            overScroller?.overScroll()
+                        }
+
+                        oldVerticalScrollOffset = verticalScrollOffset
+                        oldTime = System.currentTimeMillis()
                     }
-
-                    oldVerticalScrollOffset = verticalScrollOffset
-                    oldTime = System.currentTimeMillis()
                 }
-            }
         )
     }
 
@@ -88,10 +87,9 @@ class UnsplashPhotoPickerRecyclerView
 
 private const val overScrollThreshold = 20.0
 
-private class VerticalOverScroller(val recyclerView: UnsplashPhotoPickerRecyclerView) :
-    VerticalOverScrollBounceEffectDecorator(
-        RecyclerViewOverScrollDecorAdapter(recyclerView)
-    ) {
+private class VerticalOverScroller(
+        val recyclerView: UnsplashPhotoPickerRecyclerView
+) : VerticalOverScrollBounceEffectDecorator(RecyclerViewOverScrollDecorAdapter(recyclerView)) {
 
     inline fun overScroll() {
 

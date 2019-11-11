@@ -9,7 +9,7 @@ import com.github.chrisbanes.photoview.PhotoView
 
 internal class AspectRatioPhotoView
 @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : PhotoView(context, attrs, defStyleAttr) {
 
     internal var aspectRatio: Double = -1.0

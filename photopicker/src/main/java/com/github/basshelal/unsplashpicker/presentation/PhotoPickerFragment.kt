@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_photo_picker.*
  */
 class PhotoPickerFragment
 @JvmOverloads constructor(
-    private val apply: UnsplashPhotoPicker.() -> Unit = {}
+        private val apply: UnsplashPhotoPicker.() -> Unit = {}
 ) : Fragment() {
 
     private val onBackPressed = object : OnBackPressedCallback(true) {
@@ -40,11 +40,8 @@ class PhotoPickerFragment
         activity?.onBackPressedDispatcher?.addCallback(onBackPressed)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_photo_picker, container, false)
     }
 
@@ -58,8 +55,8 @@ class PhotoPickerFragment
     private inline fun finish() {
         onBackPressed.isEnabled = false
         activity?.supportFragmentManager?.beginTransaction()
-            ?.remove(this)
-            ?.commit()
+                ?.remove(this)
+                ?.commit()
     }
 
     override fun onDestroy() {
@@ -90,15 +87,15 @@ class PhotoPickerFragment
          * The [container] is the [IdRes] of the container View, which will default to the main content
          */
         public fun show(
-            activity: FragmentActivity,
-            @IdRes container: Int = android.R.id.content,
-            apply: UnsplashPhotoPicker.() -> Unit = {}
+                activity: FragmentActivity,
+                @IdRes container: Int = android.R.id.content,
+                apply: UnsplashPhotoPicker.() -> Unit = {}
         ): PhotoPickerFragment {
             val fragment = newInstance(apply)
             activity.supportFragmentManager
-                .beginTransaction()
-                .add(container, fragment, TAG)
-                .commit()
+                    .beginTransaction()
+                    .add(container, fragment, TAG)
+                    .commit()
             return fragment
         }
     }

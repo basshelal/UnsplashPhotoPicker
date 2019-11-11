@@ -45,11 +45,8 @@ public class PhotoShowFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback(onBackPressed)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_photo_show, container, false)
     }
 
@@ -66,18 +63,18 @@ public class PhotoShowFragment : Fragment() {
 
     private inline fun setUpPhotoView(photo: UnsplashPhoto, photoSize: PhotoSize) {
         Picasso.get()
-            .load(photoSize.get(photo.urls))
-            .into(image_photoView, object : Callback.EmptyCallback() {
-                override fun onSuccess() {
-                    image_photoView?.apply {
-                        aspectRatio = photo.height.D / photo.width.D
-                        updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                            topMargin = if (photo.isSponsored) convertDpToPx(32, context!!) else 0
+                .load(photoSize.get(photo.urls))
+                .into(image_photoView, object : Callback.EmptyCallback() {
+                    override fun onSuccess() {
+                        image_photoView?.apply {
+                            aspectRatio = photo.height.D / photo.width.D
+                            updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                                topMargin = if (photo.isSponsored) convertDpToPx(32, context!!) else 0
+                            }
                         }
+                        image_progressBar?.isVisible = false
                     }
-                    image_progressBar?.isVisible = false
-                }
-            })
+                })
     }
 
     private inline fun setUpTextViews(photo: UnsplashPhoto) {
@@ -117,20 +114,20 @@ public class PhotoShowFragment : Fragment() {
 
     private inline fun goToUrl(url: String) {
         context?.startActivity(
-            Intent().apply {
-                action = Intent.ACTION_VIEW
-                addCategory(Intent.CATEGORY_BROWSABLE)
-                data = Uri.parse(
-                    "$url?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
-                )
-            })
+                Intent().apply {
+                    action = Intent.ACTION_VIEW
+                    addCategory(Intent.CATEGORY_BROWSABLE)
+                    data = Uri.parse(
+                            "$url?utm_source=${UnsplashPhotoPickerConfig.unsplashAppName}&utm_medium=referral"
+                    )
+                })
     }
 
     private inline fun finish() {
         onBackPressed.isEnabled = false
         activity?.supportFragmentManager?.beginTransaction()
-            ?.remove(this)
-            ?.commit()
+                ?.remove(this)
+                ?.commit()
     }
 
     override fun onDestroy() {
@@ -160,10 +157,10 @@ public class PhotoShowFragment : Fragment() {
          * internationalization (i18n). Both strings must not contain leading or trailing spaces.
          */
         public fun newInstance(
-            photo: UnsplashPhoto,
-            photoSize: PhotoSize = PhotoSize.REGULAR,
-            photoByString: String = "Photo by",
-            onString: String = "on"
+                photo: UnsplashPhoto,
+                photoSize: PhotoSize = PhotoSize.REGULAR,
+                photoByString: String = "Photo by",
+                onString: String = "on"
         ): PhotoShowFragment {
             return PhotoShowFragment().apply {
                 this.arguments = Bundle().also {
@@ -188,18 +185,18 @@ public class PhotoShowFragment : Fragment() {
          * internationalization (i18n). Both strings must not contain leading or trailing spaces.
          */
         public fun show(
-            activity: FragmentActivity,
-            photo: UnsplashPhoto,
-            @IdRes container: Int = android.R.id.content,
-            photoSize: PhotoSize = PhotoSize.REGULAR,
-            photoByString: String = "Photo by",
-            onString: String = "on"
+                activity: FragmentActivity,
+                photo: UnsplashPhoto,
+                @IdRes container: Int = android.R.id.content,
+                photoSize: PhotoSize = PhotoSize.REGULAR,
+                photoByString: String = "Photo by",
+                onString: String = "on"
         ): PhotoShowFragment {
             val fragment = newInstance(photo, photoSize, photoByString, onString)
             activity.supportFragmentManager
-                .beginTransaction()
-                .add(container, fragment, TAG)
-                .commit()
+                    .beginTransaction()
+                    .add(container, fragment, TAG)
+                    .commit()
             return fragment
         }
     }

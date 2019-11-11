@@ -6,9 +6,9 @@ import androidx.appcompat.widget.AppCompatEditText
 
 internal class EditTextView
 @JvmOverloads constructor(
-    context: Context,
-    attributeSet: AttributeSet? = null,
-    defStyle: Int = 0
+        context: Context,
+        attributeSet: AttributeSet? = null,
+        defStyle: Int = 0
 ) : AppCompatEditText(context, attributeSet, defStyle) {
 
     internal var isEditable: Boolean = true
