@@ -6,7 +6,7 @@ import android.annotation.SuppressLint
 import androidx.paging.PageKeyedDataSource
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
-import com.github.basshelal.unsplashpicker.network.Repository.networkState
+import com.github.basshelal.unsplashpicker.network.Repository.state
 import retrofit2.Response
 
 /**
@@ -20,7 +20,7 @@ internal class LoadPhotoDataSource(
     private var lastPage: Int? = null
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, UnsplashPhoto>) {
-        networkState.postValue(NetworkState.LOADING)
+        state.postValue(UnsplashPhotoPickerState.LOADING)
         networkEndpoints.loadPhotos(
                 UnsplashPhotoPickerConfig.accessKey, 1, params.requestedLoadSize
         ).subscribe(
@@ -36,23 +36,23 @@ internal class LoadPhotoDataSource(
                         lastPage = response.headers()["x-total"]?.toInt()?.div(params.requestedLoadSize)
 
                         callback.onResult(body, null, 2)
-                        networkState.postValue(NetworkState.SUCCESS)
+                        state.postValue(UnsplashPhotoPickerState.LOADED)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkState.postValue(NetworkState.error(response.message()))
+                        state.postValue(UnsplashPhotoPickerState.ERROR)
                     }
                 },
                 // onError
                 {
-                    networkState.postValue(NetworkState.error(it.message))
+                    state.postValue(UnsplashPhotoPickerState.ERROR)
                 }
         )
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
-        networkState.postValue(NetworkState.LOADING)
+        state.postValue(UnsplashPhotoPickerState.LOADING)
         networkEndpoints.loadPhotos(
                 UnsplashPhotoPickerConfig.accessKey, params.key, params.requestedLoadSize
         ).subscribe(
@@ -68,17 +68,17 @@ internal class LoadPhotoDataSource(
                     if (response.isSuccessful && body != null) {
                         val nextPage = if (page == lastPage) null else page + 1
                         callback.onResult(body, nextPage)
-                        networkState.postValue(NetworkState.SUCCESS)
+                        state.postValue(UnsplashPhotoPickerState.LOADED)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkState.postValue(NetworkState.error(response.message()))
+                        state.postValue(UnsplashPhotoPickerState.ERROR)
                     }
                 },
                 // onError
                 {
-                    networkState.postValue(NetworkState.error(it.message))
+                    state.postValue(UnsplashPhotoPickerState.ERROR)
                 }
         )
     }

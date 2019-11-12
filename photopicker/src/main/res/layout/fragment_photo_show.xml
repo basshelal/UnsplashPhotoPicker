@@ -1,114 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/photoPickerPrivate_showPhotoBackground"
-        android:clickable="true"
-        android:focusable="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/photoPickerPrivate_showPhotoBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <com.github.basshelal.unsplashpicker.presentation.AspectRatioPhotoView
-            android:id="@+id/image_photoView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="32dp"
-            android:contentDescription="@string/photo"
-            app:layout_constraintBottom_toTopOf="@id/imageText_linearLayout"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/image_photoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@string/photo"
+        app:layout_constraintBottom_toTopOf="@id/imageText_linearLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-            android:id="@+id/image_progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:indeterminateTintMode="src_atop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/image_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-            android:id="@+id/imageText_linearLayout"
-            android:layout_width="match_parent"
+        android:id="@+id/imageText_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/photoBy_textView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:text="@string/photoBy"
+            android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
+            android:textSize="16sp" />
 
         <TextView
-                android:id="@+id/photoBy_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/photoBy"
-                android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
-                android:textSize="16sp" />
+            android:id="@+id/user_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text=" Leeroy Jenkins " />
 
         <TextView
-                android:id="@+id/user_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text=" Leeroy Jenkins " />
+            android:id="@+id/on_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/on"
+            android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
+            android:textSize="16sp" />
 
         <TextView
-                android:id="@+id/on_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/on"
-                android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
-                android:textSize="16sp" />
-
-        <TextView
-                android:id="@+id/unsplash_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/unsplash"
-                android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+            android:id="@+id/unsplash_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unsplash"
+            android:textColor="@color/photoPickerPrivate_showPhotoTextColor"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 
     <LinearLayout
-            android:id="@+id/sponsored_linearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UseCompoundDrawables">
+        android:id="@+id/sponsored_linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
-                android:id="@+id/sponsored_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:text="@string/sponsored"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                app:layout_constrainedWidth="true" />
+            android:id="@+id/sponsored_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@string/sponsored"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constrainedWidth="true" />
 
         <ImageView
-                android:id="@+id/sponsored_imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:src="@drawable/ic_info_24dp"
-                android:tint="@android:color/white" />
+            android:id="@+id/sponsored_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:src="@drawable/ic_info_24dp"
+            android:tint="@android:color/white" />
 
     </LinearLayout>
 

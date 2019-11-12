@@ -4,6 +4,7 @@ package com.github.basshelal.unsplashpicker.network
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.DataSource
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
@@ -24,7 +25,7 @@ internal object Repository {
 
     private val networkEndpoints = createNetworkEndpoints()
 
-    val networkState = MutableLiveData<NetworkState>()
+    val state = MutableLiveData<UnsplashPhotoPickerState>()
 
     fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
@@ -99,3 +100,16 @@ internal object Repository {
                 .create(NetworkEndpoints::class.java)
     }
 }
+
+enum class UnsplashPhotoPickerState {
+    LOADING,
+    LOADED,
+    NO_INTERNET,
+    NO_RESULTS,
+    ERROR
+}
+
+internal inline fun <K, V> DataSourceFactory(crossinline create: () -> DataSource<K, V>) =
+        object : DataSource.Factory<K, V>() {
+            override fun create(): DataSource<K, V> = create()
+        }

@@ -14,6 +14,7 @@ import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -32,12 +33,14 @@ import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.basshelal.unsplashpicker.R
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.github.basshelal.unsplashpicker.data.UnsplashUrls
 import com.github.basshelal.unsplashpicker.network.Repository
+import com.github.basshelal.unsplashpicker.network.UnsplashPhotoPickerState
 import com.github.basshelal.unsplashpicker.presentation.PhotoSize.REGULAR
 import com.github.basshelal.unsplashpicker.presentation.UnsplashPhotoPicker.Companion.downloadPhotos
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -307,7 +310,7 @@ public class UnsplashPhotoPicker
 
     // endregion XML attributes
 
-    // Views
+    //region Views
 
     /**
      * Gets the [RecyclerView] used to display all the [UnsplashPhoto]s.
@@ -334,7 +337,9 @@ public class UnsplashPhotoPicker
     inline val searchEditText: EditText?
         get() = search_editText
 
-    // Callbacks
+    //endregion Views
+
+    //region Callbacks
 
     /**
      * The [OnClickPhotoCallback] called when an [UnsplashPhoto] in [unsplashPhotoPickerRecyclerView] is clicked.
@@ -354,6 +359,12 @@ public class UnsplashPhotoPicker
     var onLongClickPhoto: OnClickPhotoCallback =
             { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
 
+
+    var onStateChanged: (UnsplashPhotoPickerState) -> Unit =
+            { newState: UnsplashPhotoPickerState -> }
+
+    //endregion Callbacks
+
     // Other
 
     /**
@@ -365,6 +376,12 @@ public class UnsplashPhotoPicker
      */
     val selectedPhotos: List<UnsplashPhoto>
         get() = adapter.getSelectedPhotos()
+
+    var photoPickerState: UnsplashPhotoPickerState = UnsplashPhotoPickerState.LOADING
+        private set(value) {
+            field = value
+            onStateChanged(value)
+        }
 
     //endregion Public API
 
@@ -461,6 +478,13 @@ public class UnsplashPhotoPicker
                     }
                 })
         updatePadding()
+
+        Repository.state.observe(context, Observer {
+            if (photoPickerState != it) {
+                this.photoPickerState = it
+                Log.e("UnsplashPhotoPicker", "state: $photoPickerState")
+            }
+        })
     }
 
     //region Public API functions
