@@ -3,6 +3,8 @@ package com.github.basshelal.unsplashpicker
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
 import com.github.basshelal.unsplashpicker.network.NetworkEndpoints
 import com.github.basshelal.unsplashpicker.network.SearchResponse
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -22,9 +24,10 @@ class NetworkTests {
 
     companion object {
         private fun createNetworkEndpoints(): NetworkEndpoints {
+            val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
             return Retrofit.Builder()
                 .baseUrl(NetworkEndpoints.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(
                     OkHttpClient.Builder().apply {

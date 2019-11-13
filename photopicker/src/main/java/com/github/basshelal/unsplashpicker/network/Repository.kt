@@ -9,6 +9,8 @@ import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.github.basshelal.unsplashpicker.UnsplashPhotoPickerConfig
 import com.github.basshelal.unsplashpicker.data.UnsplashPhoto
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.reactivex.CompletableObserver
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -91,9 +93,10 @@ internal object Repository {
     }
 
     private inline fun createNetworkEndpoints(): NetworkEndpoints {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         return Retrofit.Builder()
                 .baseUrl(NetworkEndpoints.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(createHttpClient())
                 .build()

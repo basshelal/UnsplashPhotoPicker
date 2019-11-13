@@ -48,6 +48,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
     implementation 'com.squareup.retrofit2:converter-moshi:2.6.2'
+    implementation "com.squareup.moshi:moshi:1.9.1"
+    implementation "com.squareup.moshi:moshi-kotlin:1.9.1"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.9.1"
 
     // paging
     implementation 'androidx.paging:paging-runtime:2.1.0'
