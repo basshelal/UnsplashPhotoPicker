@@ -105,11 +105,29 @@ internal object Repository {
 }
 
 enum class UnsplashPhotoPickerState {
+
+    /*
+    * Loading initial page (blank to non-blank) for search as well???
+    * Loading new page (non-blank to non-blank but potential waiting on next page) for search as well???
+    * No internet
+    * No results
+    * HTTP error server or client errors with codes
+    * */
+
     LOADING,
     LOADED,
     NO_INTERNET,
     NO_RESULTS,
-    ERROR
+    ERROR;
+
+    var message: String = ""
+        private set
+    var code: Int = 0
+        private set
+
+    companion object {
+        fun ERROR(message: String) = ERROR.also { it.message = message }
+    }
 }
 
 internal inline fun <K, V> DataSourceFactory(crossinline create: () -> DataSource<K, V>) =

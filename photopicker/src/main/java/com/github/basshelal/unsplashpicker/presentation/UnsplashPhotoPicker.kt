@@ -1,7 +1,7 @@
 @file:Suppress(
-        "UNUSED_ANONYMOUS_PARAMETER", "RedundantVisibilityModifier",
-        "unused", "MemberVisibilityCanBePrivate", "NOTHING_TO_INLINE",
-        "RemoveRedundantQualifierName"
+    "UNUSED_ANONYMOUS_PARAMETER", "RedundantVisibilityModifier",
+    "unused", "MemberVisibilityCanBePrivate", "NOTHING_TO_INLINE",
+    "RemoveRedundantQualifierName"
 )
 
 package com.github.basshelal.unsplashpicker.presentation
@@ -43,7 +43,10 @@ import com.github.basshelal.unsplashpicker.network.Repository
 import com.github.basshelal.unsplashpicker.network.UnsplashPhotoPickerState
 import com.github.basshelal.unsplashpicker.presentation.PhotoSize.REGULAR
 import com.github.basshelal.unsplashpicker.presentation.UnsplashPhotoPicker.Companion.downloadPhotos
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.photo_picker.view.*
 import java.util.concurrent.TimeUnit
@@ -72,15 +75,15 @@ public typealias OnClickPhotoCallback = (UnsplashPhoto, ImageView) -> Unit
  */
 public class UnsplashPhotoPicker
 @JvmOverloads constructor(
-        context: Context,
-        attributeSet: AttributeSet? = null,
-        defStyle: Int = 0
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyle: Int = 0
 ) : ConstraintLayout(context, attributeSet, defStyle) {
 
     //region Privates
 
     private val attrs =
-            context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
+        context.obtainStyledAttributes(attributeSet, R.styleable.UnsplashPhotoPicker)
     private var adapter: UnsplashPhotoAdapter
 
     private inline val activity: FragmentActivity
@@ -109,6 +112,8 @@ public class UnsplashPhotoPicker
         }
     }
 
+    private var networkListener: Disposable? = null
+
     //endregion Privates
 
     //region Public API
@@ -129,7 +134,7 @@ public class UnsplashPhotoPicker
      */
     @IntRange(from = 1, to = 30)
     var pageSize: Int =
-            attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_pageSize, 15)
+        attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_pageSize, 15)
 
     /**
      * The number of columns of images that will be displayed, this defaults to 2.
@@ -138,11 +143,11 @@ public class UnsplashPhotoPicker
      * to find your preference.
      */
     var spanCount: Int =
-            attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_spanCount, 2)
+        attrs.getInt(R.styleable.UnsplashPhotoPicker_photoPicker_spanCount, 2)
         set(value) {
             field = value
             unsplashPhotoPickerRecyclerView?.layoutManager =
-                    StaggeredGridLayoutManager(value, StaggeredGridLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(value, StaggeredGridLayoutManager.VERTICAL)
         }
 
     /**
@@ -157,7 +162,7 @@ public class UnsplashPhotoPicker
      * images from Unsplash.
      */
     var hasSearch: Boolean =
-            attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_hasSearch, true)
+        attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_hasSearch, true)
         set(value) {
             field = value
             searchCardView?.isVisible = value
@@ -171,7 +176,7 @@ public class UnsplashPhotoPicker
      * This has no effect if [hasSearch] is false.
      */
     var persistentSearch: Boolean =
-            attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_persistentSearch, false)
+        attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_persistentSearch, false)
 
     /**
      * Defines whether [selectedPhotos] can contain more than one [UnsplashPhoto], this defaults to `false`.
@@ -179,7 +184,7 @@ public class UnsplashPhotoPicker
      * Set this to `true` if you would like the user to be able to select multiple photos.
      */
     var isMultipleSelection: Boolean =
-            attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_isMultipleSelection, false)
+        attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_isMultipleSelection, false)
         set(value) {
             field = value
             adapter.isMultipleSelection = value
@@ -193,7 +198,7 @@ public class UnsplashPhotoPicker
      * in [unsplashPhotoPickerRecyclerView].
      */
     var errorDrawable: Drawable? =
-            attrs.getDrawable(R.styleable.UnsplashPhotoPicker_photoPicker_errorDrawable)
+        attrs.getDrawable(R.styleable.UnsplashPhotoPicker_photoPicker_errorDrawable)
         set(value) {
             field = value
             adapter.errorDrawable = value
@@ -207,7 +212,7 @@ public class UnsplashPhotoPicker
      * in [unsplashPhotoPickerRecyclerView].
      */
     var placeHolderDrawable: Drawable? =
-            attrs.getDrawable(R.styleable.UnsplashPhotoPicker_photoPicker_placeHolderDrawable)
+        attrs.getDrawable(R.styleable.UnsplashPhotoPicker_photoPicker_placeHolderDrawable)
         set(value) {
             field = value
             adapter.placeHolderDrawable = value
@@ -223,12 +228,12 @@ public class UnsplashPhotoPicker
      * The default of [PhotoSize.SMALL] should be clear enough for most use cases.
      */
     var pickerPhotoSize: PhotoSize =
-            PhotoSize.valueOf(
-                    attrs.getInt(
-                            R.styleable.UnsplashPhotoPicker_photoPicker_pickerPhotoSize,
-                            PhotoSize.SMALL.ordinal
-                    )
+        PhotoSize.valueOf(
+            attrs.getInt(
+                R.styleable.UnsplashPhotoPicker_photoPicker_pickerPhotoSize,
+                PhotoSize.SMALL.ordinal
             )
+        )
         set(value) {
             field = value
             adapter.photoSize = value
@@ -242,12 +247,12 @@ public class UnsplashPhotoPicker
      * using [showPhoto].
      */
     var showPhotoSize: PhotoSize =
-            PhotoSize.valueOf(
-                    attrs.getInt(
-                            R.styleable.UnsplashPhotoPicker_photoPicker_showPhotoSize,
-                            PhotoSize.REGULAR.ordinal
-                    )
+        PhotoSize.valueOf(
+            attrs.getInt(
+                R.styleable.UnsplashPhotoPicker_photoPicker_showPhotoSize,
+                PhotoSize.REGULAR.ordinal
             )
+        )
 
     /**
      * Sets the hint to use on the [searchEditText], this defaults to *Search Unsplash photos*.
@@ -255,8 +260,8 @@ public class UnsplashPhotoPicker
      * You can change the hint either here or by changing it directly using [searchEditText].
      */
     var searchHint: String =
-            attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_searchHint)
-                    ?: context.getString(R.string.search)
+        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_searchHint)
+            ?: context.getString(R.string.search)
         set(value) {
             field = value
             searchEditText?.hint = value
@@ -272,8 +277,8 @@ public class UnsplashPhotoPicker
      * this, it should have no leading or trailing spaces.
      */
     var photoByString: String =
-            attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_photoByString)
-                    ?: context.getString(R.string.photoBy)
+        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_photoByString)
+            ?: context.getString(R.string.photoBy)
 
     /**
      * Sets the String to be used when showing an [UnsplashPhoto], this defaults to *on*.
@@ -285,8 +290,8 @@ public class UnsplashPhotoPicker
      * this, it should have no leading or trailing spaces.
      */
     var onString: String =
-            attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_onString)
-                    ?: context.getString(R.string.on)
+        attrs.getString(R.styleable.UnsplashPhotoPicker_photoPicker_onString)
+            ?: context.getString(R.string.on)
 
     /**
      * Defines whether a click will open a photo to show, done using [showPhoto], this defaults to `true`.
@@ -294,7 +299,7 @@ public class UnsplashPhotoPicker
      * You can show a photo yourself using [showPhoto].
      */
     var clickOpensPhoto: Boolean =
-            attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_clickOpensPhoto, true)
+        attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_clickOpensPhoto, true)
 
     /**
      * Defines whether a long click will select a photo to show, done using [selectPhoto],
@@ -306,7 +311,7 @@ public class UnsplashPhotoPicker
      * You can select a photo yourself using [selectPhoto].
      */
     var longClickSelectsPhoto: Boolean =
-            attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_longClickSelectsPhoto, false)
+        attrs.getBoolean(R.styleable.UnsplashPhotoPicker_photoPicker_longClickSelectsPhoto, false)
 
     // endregion XML attributes
 
@@ -348,7 +353,7 @@ public class UnsplashPhotoPicker
      * The second parameter is the clicked [ImageView].
      */
     var onClickPhoto: OnClickPhotoCallback =
-            { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
+        { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
 
     /**
      * The [OnClickPhotoCallback] called when an [UnsplashPhoto] in [unsplashPhotoPickerRecyclerView] is long clicked.
@@ -357,11 +362,11 @@ public class UnsplashPhotoPicker
      * The second parameter is the long clicked [ImageView].
      */
     var onLongClickPhoto: OnClickPhotoCallback =
-            { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
+        { unsplashPhoto: UnsplashPhoto, imageView: ImageView -> }
 
 
     var onStateChanged: (UnsplashPhotoPickerState) -> Unit =
-            { newState: UnsplashPhotoPickerState -> }
+        { newState: UnsplashPhotoPickerState -> }
 
     //endregion Callbacks
 
@@ -403,11 +408,11 @@ public class UnsplashPhotoPicker
         activity.onBackPressedDispatcher.addCallback(onBackPressed)
 
         adapter = UnsplashPhotoAdapter(
-                isMultipleSelection,
-                onPhotoSelectedListener,
-                pickerPhotoSize,
-                placeHolderDrawable,
-                errorDrawable
+            isMultipleSelection,
+            onPhotoSelectedListener,
+            pickerPhotoSize,
+            placeHolderDrawable,
+            errorDrawable
         )
 
         unsplashPhotoPickerRecyclerView?.apply {
@@ -416,7 +421,7 @@ public class UnsplashPhotoPicker
             // keeping Android overscrolls conflicts
             overScrollMode = View.OVER_SCROLL_NEVER
             layoutManager =
-                    StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             adapter = this@UnsplashPhotoPicker.adapter
         }
 
@@ -443,41 +448,43 @@ public class UnsplashPhotoPicker
 
         // The scroll listener that deals with the sliding search bar
         unsplashPhotoPickerRecyclerView?.addOnScrollListener(
-                object : RecyclerView.OnScrollListener() {
+            object : RecyclerView.OnScrollListener() {
 
-                    var scrollingDown = false
-                    var scrollingUp = false
+                var scrollingDown = false
+                var scrollingUp = false
 
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (hasSearch) {
-                            // Scrolling up
-                            if (dy > 0 && !scrollingUp) {
-                                if (!persistentSearch) {
-                                    searchCardView?.slideUp()
-                                }
-                                scrollingUp = true
-                                scrollingDown = false
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (hasSearch) {
+                        // Scrolling up
+                        if (dy > 0 && !scrollingUp) {
+                            if (!persistentSearch) {
+                                searchCardView?.slideUp()
                             }
-                            // Scrolling down
-                            if (dy <= 0 && !scrollingDown) {
-                                if (!persistentSearch) {
-                                    searchCardView?.slideDown()
-                                }
-                                scrollingDown = true
-                                scrollingUp = false
+                            scrollingUp = true
+                            scrollingDown = false
+                        }
+                        // Scrolling down
+                        if (dy <= 0 && !scrollingDown) {
+                            if (!persistentSearch) {
+                                searchCardView?.slideDown()
                             }
+                            scrollingDown = true
+                            scrollingUp = false
                         }
                     }
+                }
 
-                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        if (hasSearch) {
-                            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                                searchEditText?.hideKeyboard()
-                            }
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (hasSearch) {
+                        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                            searchEditText?.hideKeyboard()
                         }
                     }
-                })
+                }
+            })
         updatePadding()
+
+        listenToNetwork()
 
         Repository.state.observe(context, Observer {
             if (photoPickerState != it) {
@@ -513,14 +520,14 @@ public class UnsplashPhotoPicker
      * internationalization (i18n). Both strings must not contain leading or trailing spaces.
      */
     public fun showPhoto(
-            photo: UnsplashPhoto,
-            photoSize: PhotoSize = PhotoSize.SMALL,
-            photoByString: String = this.photoByString,
-            onString: String = this.onString
+        photo: UnsplashPhoto,
+        photoSize: PhotoSize = PhotoSize.SMALL,
+        photoByString: String = this.photoByString,
+        onString: String = this.onString
     ): PhotoShowFragment {
         searchEditText?.hideKeyboard()
         return PhotoShowFragment.show(
-                activity, photo, android.R.id.content, photoSize, photoByString, onString
+            activity, photo, android.R.id.content, photoSize, photoByString, onString
         )
     }
 
@@ -539,7 +546,7 @@ public class UnsplashPhotoPicker
      * ```
      */
     public inline operator fun invoke(apply: UnsplashPhotoPicker.() -> Unit) =
-            this.apply { apply() }
+        this.apply { apply() }
 
     companion object {
 
@@ -558,8 +565,8 @@ public class UnsplashPhotoPicker
          * ```
          */
         public inline operator fun invoke(
-                context: FragmentActivity,
-                apply: UnsplashPhotoPicker.() -> Unit = {}
+            context: FragmentActivity,
+            apply: UnsplashPhotoPicker.() -> Unit = {}
         ) = get(context, apply)
 
         /**
@@ -582,12 +589,12 @@ public class UnsplashPhotoPicker
          * ```
          */
         public inline fun get(
-                context: FragmentActivity,
-                apply: UnsplashPhotoPicker.() -> Unit = {}
+            context: FragmentActivity,
+            apply: UnsplashPhotoPicker.() -> Unit = {}
         ): UnsplashPhotoPicker {
             return UnsplashPhotoPicker(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
-                        MATCH_PARENT, MATCH_PARENT
+                    MATCH_PARENT, MATCH_PARENT
                 )
                 this.apply()
             }
@@ -600,11 +607,11 @@ public class UnsplashPhotoPicker
          * This is just a wrapper around [PhotoPickerFragment.show]
          */
         public inline fun show(
-                activity: FragmentActivity,
-                @IdRes container: Int = android.R.id.content,
-                noinline apply: UnsplashPhotoPicker.() -> Unit = {}
+            activity: FragmentActivity,
+            @IdRes container: Int = android.R.id.content,
+            noinline apply: UnsplashPhotoPicker.() -> Unit = {}
         ): PhotoPickerFragment =
-                PhotoPickerFragment.show(activity, container, apply)
+            PhotoPickerFragment.show(activity, container, apply)
 
         /**
          * To abide by the
@@ -618,7 +625,7 @@ public class UnsplashPhotoPicker
          * @return the [unsplashPhotos] after they have sent a download request
          */
         public fun downloadPhotos(unsplashPhotos: List<UnsplashPhoto>) =
-                unsplashPhotos.onEach { Repository.downloadPhoto(it.links.download_location) }
+            unsplashPhotos.onEach { Repository.downloadPhoto(it.links.download_location) }
 
         /**
          * To abide by the
@@ -632,7 +639,7 @@ public class UnsplashPhotoPicker
          * @return the [unsplashPhoto] after it has sent a download request
          */
         public fun downloadPhoto(unsplashPhoto: UnsplashPhoto) =
-                unsplashPhoto.also { Repository.downloadPhoto(it.links.download_location) }
+            unsplashPhoto.also { Repository.downloadPhoto(it.links.download_location) }
     }
 
     //endregion Public API functions
@@ -643,18 +650,18 @@ public class UnsplashPhotoPicker
     private inline fun EditText.bindSearch() {
         // The search EditText is what does everything! Any changes to it change the adapter contents
         RxTextView.textChanges(this)
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
-                .switchMap { text: CharSequence ->
-                    if (text.isBlank()) Repository.loadPhotos(pageSize)
-                    else Repository.searchPhotos(text.toString(), pageSize)
-                }.subscribe {
-                    adapter.submitList(it) {
-                        if (adapter.currentList?.isNotEmpty() == true)
-                            unsplashPhotoPickerRecyclerView?.scrollToPosition(0)
-                    }
-                    this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .observeOn(Schedulers.io())
+            .switchMap { text: CharSequence ->
+                if (text.isBlank()) Repository.loadPhotos(pageSize)
+                else Repository.searchPhotos(text.toString(), pageSize)
+            }.subscribe {
+                adapter.submitList(it) {
+                    if (adapter.currentList?.isNotEmpty() == true)
+                        unsplashPhotoPickerRecyclerView?.scrollToPosition(0)
                 }
+                this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
+            }
     }
 
     private inline fun EditText.hideKeyboard() {
@@ -663,7 +670,7 @@ public class UnsplashPhotoPicker
             this.setSelection(0)
             this.clearFocus()
             (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
-                    ?.hideSoftInputFromWindow(windowToken, 0)
+                ?.hideSoftInputFromWindow(windowToken, 0)
         }
     }
 
@@ -677,12 +684,41 @@ public class UnsplashPhotoPicker
         }
     }
 
+    private inline fun listenToNetwork() {
+        networkListener = ReactiveNetwork
+            .observeNetworkConnectivity(context)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnDispose { Log.e("INTERNET", "DISPOSED") }
+            .subscribe(
+                // onNext
+                {
+                    Log.e("INTERNET", it.toString())
+                },
+                // onError
+                {
+                    Log.e("INTERNET", it.toString())
+                },
+                // onComplete
+                {
+                    Log.e("INTERNET", "COMPLETE")
+                },
+                // onSubscribe
+                {
+                    Log.e("INTERNET", "SUBSCRIBE")
+                }
+            )
+    }
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
 
         // If the caller destroyed this View when the search bar was full
         // we must disable the onBackPressed to avoid "empty" back presses
         onBackPressed.isEnabled = false
+
+        networkListener?.dispose()
+        networkListener = null
     }
 
     //endregion Private functions
@@ -746,9 +782,9 @@ private open class SimpleTextWatcher : TextWatcher {
 
     companion object {
         operator fun invoke(onChanged: (String) -> Unit) =
-                object : SimpleTextWatcher() {
-                    override fun afterTextChanged(s: Editable?) = onChanged(s?.toString() ?: "")
-                }
+            object : SimpleTextWatcher() {
+                override fun afterTextChanged(s: Editable?) = onChanged(s?.toString() ?: "")
+            }
     }
 }
 
