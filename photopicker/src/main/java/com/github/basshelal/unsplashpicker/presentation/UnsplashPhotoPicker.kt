@@ -440,7 +440,7 @@ public class UnsplashPhotoPicker
         // they work when there is no internet)
         searchEditText?.addTextChangedListener {
             if (it != null) {
-                this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = true
+                this@UnsplashPhotoPicker.initialPage_progressBar?.isVisible = true
                 clearSearch_imageView?.isVisible = it.isNotBlank()
                 onBackPressed.isEnabled = it.isNotBlank()
             }
@@ -482,6 +482,18 @@ public class UnsplashPhotoPicker
                     }
                 }
             })
+
+        unsplashPhotoPickerRecyclerView?.userOverScrollListener = { offset: Float ->
+            val max = this@UnsplashPhotoPicker.refresh_progressBar?.let {
+                it.height
+            } ?: 250
+            Log.e("ghgh", "${offset / max.F}")
+            this@UnsplashPhotoPicker.refresh_progressBar?.apply {
+                isIndeterminate = false
+                alpha = offset / max.F
+            }
+        }
+
         updatePadding()
 
         listenToNetwork()
@@ -660,7 +672,7 @@ public class UnsplashPhotoPicker
                     if (adapter.currentList?.isNotEmpty() == true)
                         unsplashPhotoPickerRecyclerView?.scrollToPosition(0)
                 }
-                this@UnsplashPhotoPicker.unsplashPicker_progressBar?.isVisible = false
+                this@UnsplashPhotoPicker.initialPage_progressBar?.isVisible = false
             }
     }
 
