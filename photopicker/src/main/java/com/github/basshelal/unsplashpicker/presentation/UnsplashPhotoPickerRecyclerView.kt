@@ -5,7 +5,6 @@ package com.github.basshelal.unsplashpicker.presentation
 import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.RecyclerView
-import me.everything.android.ui.overscroll.IOverScrollState
 import me.everything.android.ui.overscroll.VerticalOverScrollBounceEffectDecorator
 import me.everything.android.ui.overscroll.adapters.RecyclerViewOverScrollDecorAdapter
 
@@ -31,16 +30,6 @@ class UnsplashPhotoPickerRecyclerView
     var oldVerticalScrollOffset: Int = 0
     private var oldTime: Long = 0L
     private var overScroller: VerticalOverScroller? = null
-
-    var userOverScrollListener: (Float) -> Unit = { offset: Float -> }
-        set(value) {
-            field = value
-            overScroller?.setOverScrollUpdateListener { decor, state, offset ->
-                if (state == IOverScrollState.STATE_DRAG_START_SIDE) {
-                    value(offset)
-                }
-            }
-        }
 
     override fun setLayoutManager(layoutManager: LayoutManager?) {
         super.setLayoutManager(layoutManager)

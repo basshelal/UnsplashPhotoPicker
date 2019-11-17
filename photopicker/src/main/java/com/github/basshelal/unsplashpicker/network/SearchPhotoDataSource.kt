@@ -21,7 +21,7 @@ internal class SearchPhotoDataSource(
     private var lastPage: Int? = null
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, UnsplashPhoto>) {
-        state.postValue(UnsplashPhotoPickerState.LOADING)
+        state.postValue(UnsplashPhotoPickerState.LOADING_INITIAL)
         networkEndpoints.searchPhotos(
                 UnsplashPhotoPickerConfig.accessKey, criteria, 1, params.requestedLoadSize
         ).subscribe(
@@ -34,10 +34,14 @@ internal class SearchPhotoDataSource(
 
                     val body = response.body()
                     if (response.isSuccessful && body != null) {
-                        lastPage = response.headers()["x-total"]?.toInt()?.div(params.requestedLoadSize)
+                        if (body.total > 0) {
+                            lastPage = response.headers()["x-total"]?.toInt()?.div(params.requestedLoadSize)
 
-                        callback.onResult(body.results, null, 2)
-                        state.postValue(UnsplashPhotoPickerState.LOADED)
+                            callback.onResult(body.results, null, 2)
+                            state.postValue(UnsplashPhotoPickerState.LOADED_INITIAL)
+                        } else {
+                            state.postValue(UnsplashPhotoPickerState.NO_RESULTS)
+                        }
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message
@@ -54,7 +58,7 @@ internal class SearchPhotoDataSource(
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
         val page = params.key
-        state.postValue(UnsplashPhotoPickerState.LOADING)
+        state.postValue(UnsplashPhotoPickerState.LOADING_NEXT)
         networkEndpoints.searchPhotos(
                 UnsplashPhotoPickerConfig.accessKey, criteria, page, params.requestedLoadSize
         ).subscribe(
@@ -69,7 +73,7 @@ internal class SearchPhotoDataSource(
                     if (response.isSuccessful && body != null) {
                         val nextPage = if (page == lastPage) null else page + 1
                         callback.onResult(body.results, nextPage)
-                        state.postValue(UnsplashPhotoPickerState.LOADED)
+                        state.postValue(UnsplashPhotoPickerState.LOADED_NEXT)
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message

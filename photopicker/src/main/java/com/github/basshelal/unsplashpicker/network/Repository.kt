@@ -106,23 +106,20 @@ internal object Repository {
 
 enum class UnsplashPhotoPickerState {
 
-    /*
-    * Loading initial page (blank to non-blank) for search as well???
-    * Loading new page (non-blank to non-blank but potential waiting on next page) for search as well???
-    * No internet
-    * No results
-    * HTTP error server or client errors with codes
-    * */
-
-    LOADING,
-    LOADED,
-    NO_INTERNET,
+    /**
+     * From empty to the first page
+     */
+    LOADING_INITIAL,
+    /**
+     * From non-empty to non-empty with the possibility of waiting
+     */
+    LOADING_NEXT,
+    LOADED_INITIAL,
+    LOADED_NEXT,
     NO_RESULTS,
     ERROR;
 
     var message: String = ""
-        private set
-    var code: Int = 0
         private set
 
     companion object {
