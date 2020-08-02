@@ -25,3 +25,45 @@
 -dontwarn io.reactivex.functions.Function
 -dontwarn rx.internal.util.**
 -dontwarn sun.misc.Unsafe
+
+-keep class com.github.basshelal.unsplashpicker.data.UnsplashLinks {*;}
+-keepclassmembers class com.github.basshelal.unsplashpicker.data.UnsplashLinks {
+ <fields>;
+ <init>();
+ <methods>;
+}
+
+-keep class com.github.basshelal.unsplashpicker.data.UnsplashPhoto {*;}
+-keepclassmembers class com.github.basshelal.unsplashpicker.data.UnsplashPhoto {
+ <fields>;
+ <init>();
+ <methods>;
+}
+
+-keep class com.github.basshelal.unsplashpicker.data.NetworkEndpoints {*;}
+-keepclassmembers class com.github.basshelal.unsplashpicker.data.NetworkEndpoints {
+ <fields>;
+ <init>();
+ <methods>;
+}
+
+-keep class com.github.basshelal.unsplashpicker.data.SearchResponse {*;}
+-keepclassmembers class com.github.basshelal.unsplashpicker.data.SearchResponse {
+ <fields>;
+ <init>();
+ <methods>;
+}
+
+-keep class com.github.basshelal.unsplashpicker.data.UnsplashUrls {*;}
+-keepclassmembers class com.github.basshelal.unsplashpicker.data.UnsplashUrls {
+ <fields>;
+ <init>();
+ <methods>;
+}
+
+-keep class com.github.basshelal.unsplashpicker.data.UnsplashUser {*;}
+-keepclassmembers class com.github.basshelal.unsplashpicker.data.UnsplashUser {
+ <fields>;
+ <init>();
+ <methods>;
+}
